@@ -999,7 +999,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:6,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:7, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1040,7 +1040,11 @@ const SLOT_LABEL = { breakfast:'Breakfast', lunch:'Lunch', snack:'Snack', dinner
 const dk = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const pd = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
 const addD = (k, n) => { const d = pd(k); d.setDate(d.getDate() + n); return dk(d); };
-const today = () => dk();
+// the app's day runs from dayStartHour (default 7 AM) to the same time next morning
+const dayStart = () => { const h = +(S?.profile?.dayStartHour ?? 7); return isNaN(h) ? 7 : clamp(h, 0, 12); };
+const today = () => dk(new Date(Date.now() - dayStart() * 3600e3));
+// hours since midnight, counting after-midnight hours as 24+ so late meals stay in the same day
+const lateHM = (d = new Date()) => { const h = d.getHours() + d.getMinutes() / 60; return h < dayStart() ? h + 24 : h; };
 const wdOf = k => pd(k).getDay();
 const daysBetween = (a, b) => Math.round((pd(b) - pd(a)) / DAY);
 const fmtDate = (k, o = {}) => { const d = pd(k); return `${o.wd ? WD3[d.getDay()] + ', ' : ''}${MON[d.getMonth()]} ${d.getDate()}${o.y ? ', ' + d.getFullYear() : ''}`; };
@@ -1394,8 +1398,8 @@ function swapOptions(it, opts = {}) {
 
 // ---------- "What should I eat?" — local, transparent engine ----------
 function currentSlot(d = new Date()) {
-  const h = d.getHours() + d.getMinutes() / 60, mt = S.profile.mealTimes;
-  const hm = s => { const [a, b] = (s || '0:0').split(':').map(Number); return a + b / 60; };
+  const h = lateHM(d), mt = S.profile.mealTimes;
+  const hm = s => { const [a, b] = (s || '0:0').split(':').map(Number); const v = a + b / 60; return v < dayStart() ? v + 24 : v; };
   const order = SLOTS.map(s => [s, hm(mt[s])]).sort((a, b) => a[1] - b[1]);
   let best = order[0][0];
   for (const [s, t] of order) if (h >= t - 1.5) best = s;
@@ -1683,6 +1687,23 @@ function validateBackup(j) {
     else if (STATIC_BUCKETS.includes(b)) clean[b] = v;
   }
   return { ok: true, errs, data: clean };
+}
+
+function repairLateEntries() {
+  const ds = dayStart(); let moved = 0;
+  for (const [k, d] of Object.entries(S.days)) {
+    const keep = [];
+    for (const m of d.meals || []) {
+      const t = m.t ? new Date(m.t) : null;
+      if (t && dk(t) === k && t.getHours() < ds) {
+        const prev = getDay(addD(k, -1));
+        if (m.planSlot && prev.meals.some(x => x.planSlot === m.planSlot)) delete m.planSlot;
+        prev.meals.push(m); moved++;
+      } else keep.push(m);
+    }
+    d.meals = keep;
+  }
+  return moved;
 }
 
 /* ============================================================
@@ -2814,6 +2835,7 @@ function vSettings() {
     <div class="row"><button class="btn sm" data-a="regenFastingDays">Rebuild fasting days in the weekly plan</button></div></section>
   <section class="card stack s16"><h2>Reminders</h2>${remindersHTML()}</section>
   <section class="card stack s16"><h2>Appearance &amp; units</h2><div class="field"><span>Theme</span>${seg('theme', p.theme, [['dark','Dark'],['light','Light'],['system','Match device']])}</div>
+    <div class="field"><span>My day starts at</span><select class="input" style="max-width:220px" id="s-daystart" data-c="setP" data-path="dayStartHour" data-type="num">${[0,3,4,5,6,7,8,9,10].map(h => opt(h, h === 0 ? '12:00 AM (midnight)' : fmtHM(pad(h) + ':00'), p.dayStartHour ?? 7)).join('')}</select><span class="tiny dim" style="font-weight:500">Meals eaten after midnight count for the previous day until this time.</span></div>
     <div class="field"><span>Weekly review day</span><select class="input" style="max-width:220px" id="s-review" data-c="setP" data-path="reviewDay" data-type="num">${WD.map((w, i) => opt(i, w, p.reviewDay)).join('')}</select></div>
     <div class="field"><span>Weight units</span>${seg('units', p.units, [['metric','Kilograms (kg)'],['imperial','Pounds (lb)']])}</div>
     <p class="small muted" style="margin:0">Food stays in grams and ml. Times display in 12-hour format.</p></section>
@@ -2883,8 +2905,8 @@ function vSeason() {
    ============================================================ */
 
 // ---------------- 1. DAILY EXECUTION ----------------
-function nowHM() { const d = new Date(); return d.getHours() + d.getMinutes() / 60; }
-const hmNum = s => { const [a, b] = (s || '0:0').split(':').map(Number); return a + b / 60; };
+function nowHM() { return lateHM(); }
+const hmNum = s => { const [a, b] = (s || '0:0').split(':').map(Number); const v = a + b / 60; return v < dayStart() ? v + 24 : v; };
 function todayTasks(k = today()) {
   const d = getDay(k), plan = planFor(k), sch = scheduleFor(k), st = sessionStatus(k), t = targets(), tasks = [];
   const weighed = S.measurements.some(m => m.date === k && m.kg != null);
@@ -3389,7 +3411,7 @@ const A = {
   eeSave() {
     const E = window._ee, d = getDay(E.k), e = d.meals.find(m => m.id === E.id); if (!e) return;
     e.slot = $('#ee-slot').value;
-    const [h, m] = ($('#ee-time').value || '12:00').split(':').map(Number); const t = pd(E.k); t.setHours(h, m); e.t = t.toISOString();
+    const [h, m] = ($('#ee-time').value || '12:00').split(':').map(Number); const t = pd(E.k); if (h < dayStart()) t.setDate(t.getDate() + 1); t.setHours(h, m); e.t = t.toISOString();
     if (E.items) { const before = itemsNut(e.items).k; Object.assign(e, entryFromItems(window._ie.ee.filter(i => +i.a > 0), {})); if (e.planSlot && before) e.portion = round((e.portion || 1) * e.k / before, 2); }
     else { e.k = +$('#ee-k').value || 0; e.p = +$('#ee-p').value || 0; e.c = +$('#ee-c').value || 0; e.f = +$('#ee-f').value || 0; }
     saveDay(E.k); closeModal(); render(); toast('Entry updated');
@@ -3758,7 +3780,8 @@ const C = {
     let v = el.value; if (el.dataset.type === 'num') { const optional = ['age','goalWeight','currentWeight'].includes(el.dataset.path); v = numOr(v, null); if ((v == null && !optional) || (v != null && (v < 0 || (el.dataset.path === 'age' && (v < 13 || v > 100))))) { toast('Enter a valid number.'); el.value = getPath(S.profile, el.dataset.path) ?? ''; return; } }
     setPath(S.profile, el.dataset.path, v); Store.save('profile');
     if (['kcal','protein'].includes(el.dataset.path)) { for (let w = 0; w < 7; w++) S.plan[w] = fitPlanDay(S.plan[w]); Store.save('plan'); }
-    if (el.dataset.path === 'kcal' || el.dataset.path === 'protein' || el.dataset.path === 'fat' || el.dataset.path === 'carbs') render();
+    if (el.dataset.path === 'dayStartHour') { S._today = today(); S.ui.nutDate = null; }
+    if (['kcal','protein','fat','carbs','dayStartHour'].includes(el.dataset.path)) render();
   },
   prefAdd(el) { if (!el.value) return; const arr = S.profile[el.dataset.k]; if (!arr.includes(el.value)) arr.push(el.value); Store.save('profile'); render(); },
   remTime(el) { S.reminders.find(r => r.id === el.dataset.id).time = el.value; Store.save('reminders'); },
@@ -4095,6 +4118,7 @@ function normalize() {
   for (let w = 0; w < 7; w++) if (!S.plan[w]) S.plan[w] = generatePlanDay(w, 1000 + w * 37);
   if (needV2) personalize();
   else if (needV6) { S.profile.theme = 'light'; S.profile.pv = 6; setTimeout(() => Store.save('profile'), 200); }
+  if ((S.profile.pv || 0) < 7 && S.profile.onboarded) { S.profile.pv = 7; const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
 }
 async function init() {
@@ -4113,7 +4137,7 @@ async function init() {
   Coach.init();
   setInterval(tick, 500);
   setInterval(() => {
-    if (today() !== S._today) { S._today = today(); S.ui.nutDate = null; S.ui.eat = null; softRender(); toast('New day: today\'s log starts fresh.'); }
+    if (today() !== S._today) { S._today = today(); S.ui.nutDate = null; S.ui.eat = null; softRender(); toast(`New day started at ${fmtHM(pad(dayStart()) + ':00')}: today\'s log starts fresh.`); }
     checkReminders();
   }, 20000);
   window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => S.profile.theme === 'system' && applyTheme());
