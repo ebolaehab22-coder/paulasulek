@@ -612,6 +612,16 @@ const SEED_FOODS_RAW = [
   ['potato_raw','Potatoes, raw','carb','g',77,2,17,0.1,[['medium',170]],[],null],
   ['lentils_dry','Lentils, dry (raw)','carb','g',352,25,63,1,[['cup',190]],['egyptian'],null],
   ['chickpeas_dry','Chickpeas, dry (raw)','carb','g',364,19,61,6,[['cup',200]],['egyptian'],null],
+  // energy drinks · per 100 ml · Red Bull & Monster from their labels, others are estimates (check the can)
+  ['redbull','Red Bull','drink','ml',45,0,11,0,[['can',250]],['energy'],null],
+  ['redbull_sf','Red Bull Sugarfree','drink','ml',3,0,0,0,[['can',250]],['energy','diet'],null],
+  ['redbull_zero','Red Bull Zero','drink','ml',2,0,0.5,0,[['can',250]],['energy','diet'],null],
+  ['monster','Monster Energy (green)','drink','ml',47,0,11,0,[['can',500]],['energy'],null],
+  ['monster_ultra','Monster Ultra (zero sugar)','drink','ml',2,0,0.9,0,[['can',500]],['energy','diet'],null],
+  ['monster_mango','Monster Mango Loco','drink','ml',50,0,12,0,[['can',500]],['energy'],null],
+  ['fury','Fury energy drink','drink','ml',46,0,11.5,0,[['can',250],['bottle',400]],['energy','egyptian'],null],
+  ['sting','Sting energy drink','drink','ml',49,0,12,0,[['bottle',250],['big bottle',400]],['energy'],null],
+  ['twist','Twist energy drink','drink','ml',45,0,11,0,[['can',250]],['energy','egyptian'],null],
   ['pb','Peanut butter','fat','g',588,25,20,50,[['tbsp',16]],[],null],
   ['tahini','Tahini','fat','g',595,17,21,54,[['tbsp',15]],['egyptian'],null],
   ['olive_oil','Olive oil','fat','g',884,0,0,100,[['tsp',4.5],['tbsp',13.5]],[],null],
@@ -658,11 +668,13 @@ const FOOD_AR = {
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
   salad:'سلطة', veg_mix:'خضار', tomato_sauce:'صلصة طماطم', salsa:'صلصة دقة', molokhia:'ملوخية', cucumber:'خيار', lentil_soup:'شوربة عدس', croissant:'كرواسون', diet_soda:'بيبسي دايت زيرو', juice:'عصير', soda:'بيبسي كولا مشروب غازي',
   chicken_raw:'فراخ صدور نيئة', beef_raw:'لحمة نيئة', mince_raw:'لحمة مفرومة نيئة', rice_raw:'رز نيء ناشف', pasta_dry:'مكرونة ناشفة نيئة', potato_raw:'بطاطس نيئة', lentils_dry:'عدس ناشف', chickpeas_dry:'حمص ناشف',
+  redbull:'ريد بول', redbull_sf:'ريد بول شوجر فري دايت', redbull_zero:'ريد بول زيرو دايت', monster:'مونستر', monster_ultra:'مونستر الترا زيرو دايت', monster_mango:'مونستر مانجو', fury:'فيوري', sting:'ستينج', twist:'تويست',
   r_koshary:'كشري', r_koshary_l:'كشري كبير', r_shawarma:'ساندوتش شاورما', r_shawarma_plate:'طبق شاورما فتة', r_grill_quarter:'ربع فرخة مشوية', r_grill_half:'نص فرخة مشوية', r_grill_breast_meal:'وجبة صدور مشوية', r_kofta_meal:'وجبة كفتة', r_hawawshi:'حواوشي', r_liver:'ساندوتش كبدة', r_pane:'ساندوتش بانيه', r_bechamel:'مكرونة بشاميل', r_pasta_chicken:'مكرونة فراخ', r_burger:'برجر', r_fried_chicken:'فراخ مقلية', r_pizza:'بيتزا', r_fries:'بطاطس محمرة', r_crepe:'كريب فراخ',
 };
+const LABEL_FOODS = ['redbull','redbull_sf','redbull_zero','monster','monster_ultra'];
 const SEED_FOODS = SEED_FOODS_RAW.map(r => ({
   id: r[0], n: r[1], cat: r[2], b: r[3], k: r[4], p: r[5], c: r[6], f: r[7],
-  m: r[8], tags: r[9], animal: r[10], src: 'est', ar: FOOD_AR[r[0]] || '',
+  m: r[8], tags: r[9], animal: r[10], src: LABEL_FOODS.includes(r[0]) ? 'label' : 'est', ar: FOOD_AR[r[0]] || '',
   st: /, raw|dry|\(raw\)/i.test(r[1]) ? 'raw' : /cooked|grilled|boiled|baked|homemade|soup/i.test(r[1]) ? 'cooked' : null
 }));
 
@@ -1060,8 +1072,8 @@ const S = {
   measurements: [], days: {}, workouts: [], active: null, exercises: [],
   meta: {}, ui: { view: 'overview', nutTab: 'today', trainTab: 'week', range: 30, anaRange: 30, libFilter: {}, coach: [] },
 };
-const foodMap = () => { if (!S._fm || S._fmv !== S.foods) { S._fm = Object.fromEntries(S.foods.map(f => [f.id, f])); S._fmv = S.foods; } return S._fm; };
-const F = id => foodMap()[id];
+const foodMap = () => { if (!S._fm || S._fmv !== S.foods || S._fmn !== S.foods.length) { S._fm = Object.fromEntries(S.foods.map(f => [f.id, f])); S._fmv = S.foods; S._fmn = S.foods.length; } return S._fm; };
+const F = id => foodMap()[id] || S.foods.find(f => f.id === id);
 const MEAL = id => S.meals.find(m => m.id === id);
 const EX = id => S.exercises.find(e => e.id === id) || { id, n: id, pm: [], sm: [], eq: '', type: '', diff: '', steps: [], mistakes: [], alt: [] };
 const TPL = id => S.program.templates.find(t => t.id === id);
@@ -1257,8 +1269,8 @@ function itemLabel(it) {
   if (f.b === 'u') return `${fmtAmt(it.a)} × ${f.n}`;
   if (it.u === 'g' || it.u === 'ml') return `${fmtAmt(it.a)} ${it.u} ${f.n.toLowerCase()}`;
   const g = measureG(f, it.u), nm = f.n.toLowerCase();
-  if (nm.includes(it.u.split(' ').pop())) return `${fmtAmt(it.a)} × ${nm}${g ? ` (${fmtAmt(it.a * g)} g)` : ''}`;
-  return `${fmtAmt(it.a)} ${it.u}${it.a > 1 && !/s$/.test(it.u) ? 's' : ''} ${nm}${g ? ` (${fmtAmt(it.a * g)} g)` : ''}`;
+  if (nm.includes(it.u.split(' ').pop())) return `${fmtAmt(it.a)} × ${nm}${g ? ` (${fmtAmt(it.a * g)} ${f.b === 'ml' ? 'ml' : 'g'})` : ''}`;
+  return `${fmtAmt(it.a)} ${it.u}${it.a > 1 && !/s$/.test(it.u) ? 's' : ''} ${nm}${g ? ` (${fmtAmt(it.a * g)} ${f.b === 'ml' ? 'ml' : 'g'})` : ''}`;
 }
 const fmtKg = w => fmtAmt(toDispW(+w || 0));
 const fmtAmt = a => { const r = round(a, 1); return Number.isInteger(r) ? String(r) : r.toFixed(1); };
@@ -1586,7 +1598,7 @@ function gramLabel(it) {
   if (f.b === 'u') return `${fmtAmt(it.a)} × ${nm}`;
   if (it.u === 'g' || it.u === 'ml') return `${fmtAmt(it.a)} ${it.u} ${nm}`;
   const g = measureG(f, it.u);
-  return g ? `${fmtAmt(it.a * g)} g ${nm} (${fmtAmt(it.a)} ${it.u})` : `${fmtAmt(it.a)} ${it.u} ${nm}`;
+  return g ? `${fmtAmt(it.a * g)} ${f.b === 'ml' ? 'ml' : 'g'} ${nm} (${fmtAmt(it.a)} ${it.u})` : `${fmtAmt(it.a)} ${it.u} ${nm}`;
 }
 
 // ---------- units (stored in kg; shown in kg or lb) ----------
@@ -1797,6 +1809,15 @@ const FOOD_ART = {
   potato_raw: () => FOOD_ART.potato().replace(/#E6C35E/g, '#C7A16B').replace(/#EFD077/g, '#D7B27A'),
   lentils_dry: () => dots(60, 50, 54, 30, 20, 2.4, '#D07A3A', 9),
   chickpeas_dry: () => dots(30, 50, 54, 30, 20, 4.5, '#D9BE8A', 14),
+  redbull: () => `<rect x="34" y="16" width="32" height="70" rx="6" fill="#2B4FA8"/><rect x="34" y="16" width="16" height="70" rx="6" fill="#C9CED6"/><rect x="34" y="16" width="32" height="70" rx="6" fill="none" stroke="#1C357A" stroke-width="2"/><circle cx="50" cy="50" r="8" fill="#F2C400"/><path d="M40 60 l6 -4 l4 4 l4 -4 l6 4" stroke="#D5202E" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  redbull_sf: () => FOOD_ART.redbull().replace('#2B4FA8', '#5A8FD8'),
+  redbull_zero: () => FOOD_ART.redbull().replace('#2B4FA8', '#1A1A1A'),
+  monster: () => `<rect x="33" y="10" width="34" height="80" rx="6" fill="#111"/><path d="M41 28 l3 36 M50 26 l1 40 M59 28 l-2 36" stroke="#7CD038" stroke-width="4" stroke-linecap="round"/>`,
+  monster_ultra: () => FOOD_ART.monster().replace('#111', '#F4F4F4').replace(/#7CD038/g, '#9AA3AE'),
+  monster_mango: () => FOOD_ART.monster().replace(/#7CD038/g, '#F29A1F'),
+  fury: () => `<rect x="34" y="16" width="32" height="70" rx="6" fill="#1D1D1D"/><path d="M52 26 l-10 22 h8 l-4 22 l14 -28 h-8 l6 -16z" fill="#E8B021"/>`,
+  sting: () => `<path d="M42 14 h16 v10 q10 6 10 18 v38 q0 6 -6 6 h-24 q-6 0 -6 -6 v-38 q0 -12 10 -18z" fill="#D7262E"/><rect x="42" y="8" width="16" height="8" rx="2" fill="#F2C400"/><rect x="36" y="46" width="28" height="16" rx="3" fill="#F2C400"/>`,
+  twist: () => `<rect x="34" y="16" width="32" height="70" rx="6" fill="#5B2A86"/><path d="M40 40 q10 -10 20 0 t0 20" stroke="#F04FA0" stroke-width="5" fill="none" stroke-linecap="round"/>`,
   // restaurant items
   r_shawarma: () => `<path d="M10 70 L66 18 Q84 18 86 34 L32 86 Q12 88 10 70Z" fill="#E8D3A7"/><path d="M66 18 Q84 18 86 34 Q74 36 66 18Z" fill="#B97F3E"/><path d="M14 72 L40 48 L58 66 L32 86 Q14 88 14 72Z" fill="#C9CDD1"/><path d="M48 40 l 22 -18 M54 46 l 22 -20" stroke="#A5643A" stroke-width="3" stroke-linecap="round"/>`,
   r_shawarma_plate: () => FOOD_ART.rice() + `<g transform="translate(18 -6) scale(.7)">${FOOD_ART.liver().replace(/#5A2525|#6B2E2E/g, '#B5743C')}</g>`,
@@ -1825,7 +1846,7 @@ function foodComp(id) {
   return FOOD_ART[FOOD_FALLBACK[f.cat] || 'rice']();
 }
 const BOWL_IDS = new Set(['greek','yogurt','hp_yogurt','lentil_soup','molokhia','oats','quinoa','foul','cottage']);
-const SIDE_IDS = new Set(['whey','milk','milk_skim','milk_low','diet_soda','soda','juice','yogurt_sauce','salsa','fruit','pb','tahini','honey','olive_oil','ghee']);
+const SIDE_IDS = new Set(['redbull','redbull_sf','redbull_zero','monster','monster_ultra','monster_mango','fury','sting','twist','whey','milk','milk_skim','milk_low','diet_soda','soda','juice','yogurt_sauce','salsa','fruit','pb','tahini','honey','olive_oil','ghee']);
 function foodArt(id, size = 44) {
   return `<svg class="art" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="var(--art-bg)"/><g transform="translate(8 6) scale(.84)">${foodComp(id)}</g></svg>`;
 }
@@ -2439,7 +2460,7 @@ function vFoods() {
   <div class="note warn small">Starter values are typical estimates for generic foods; restaurant items vary widely. Replace them with your product labels (tap a food → edit) to make your tracking more accurate.</div>
   <section class="card flush"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Food</th><th>Per</th><th class="n">kcal</th><th class="n">P</th><th class="n">C</th><th class="n">F</th><th>Status</th><th></th></tr></thead><tbody>
   ${list.map(f => { const st = p.dislikes.includes(f.id) ? '<span class="tag bad">disliked</span>' : p.unavailable.includes(f.id) ? '<span class="tag">unavailable</span>' : p.favorites.includes(f.id) ? '<span class="tag lime">favorite</span>' : p.lessPreferred.includes(f.id) ? '<span class="tag">less preferred</span>' : '';
-    return `<tr><td><div class="row nowrap" style="gap:10px">${foodArt(f.id, 36)}<div><b style="font-weight:600">${esc(f.n)}</b> ${f.src === 'est' ? '<span class="est">EST.</span>' : f.src === 'label' ? '<span class="tag ok">label</span>' : '<span class="tag">custom</span>'}${f.m?.length ? `<div class="tiny dim">${f.m.map(m => `${m[0]} ≈ ${m[1]} g`).join(' · ')}</div>` : ''}</div></div></td><td class="dim small">${f.b === 'u' ? '1 item' : f.b === 'ml' ? '100 ml' : '100 g'}</td><td class="n">${fmtN(f.k)}</td><td class="n">${fmtN(f.p, 1)}</td><td class="n">${fmtN(f.c, 1)}</td><td class="n">${fmtN(f.f, 1)}</td><td>${st}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-a="foodEdit" data-id="${f.id}">Edit</button></td></tr>`; }).join('') || `<tr><td colspan="8" class="muted">No foods match.</td></tr>`}
+    return `<tr><td><div class="row nowrap" style="gap:10px">${foodArt(f.id, 36)}<div><b style="font-weight:600">${esc(f.n)}</b> ${f.src === 'est' ? '<span class="est">EST.</span>' : f.src === 'label' ? '<span class="tag ok">label</span>' : '<span class="tag">custom</span>'}${f.m?.length ? `<div class="tiny dim">${f.m.map(m => `${m[0]} ≈ ${m[1]} ${f.b === "ml" ? "ml" : "g"}`).join(' · ')}</div>` : ''}</div></div></td><td class="dim small">${f.b === 'u' ? '1 item' : f.b === 'ml' ? '100 ml' : '100 g'}</td><td class="n">${fmtN(f.k)}</td><td class="n">${fmtN(f.p, 1)}</td><td class="n">${fmtN(f.c, 1)}</td><td class="n">${fmtN(f.f, 1)}</td><td>${st}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-a="foodEdit" data-id="${f.id}">Edit</button></td></tr>`; }).join('') || `<tr><td colspan="8" class="muted">No foods match.</td></tr>`}
   </tbody></table></div></section>
   <div class="row between" style="margin-top:6px"><h2>Saved meals &amp; recipes</h2><button class="btn" data-a="mealEdit">${ic('plus')}New meal</button></div>
   <div class="grid g3">${S.meals.map(m => { const n = mealNut(m), blk = mealBlockReason(m); return `<div class="card stack" style="gap:6px">${mealArt(m.items, 200, m.n).replace('class="art"', 'class="art wide"')}<div class="row between nowrap"><b>${esc(m.n)}</b><button class="btn ghost sm icon" data-a="favMeal" data-id="${m.id}" aria-label="Favorite" style="color:${p.favMeals.includes(m.id) ? 'var(--lime-ink)' : 'var(--fg3)'}">${ic('star')}</button></div><div class="tiny dim">${m.slot.map(s => SLOT_LABEL[s]).join(' · ')} · ${m.min} min${m.cook ? ' · cook' : ''}</div>${macroLine(n)}${blk ? `<span class="tiny" style="color:var(--warn)">Not suggested: ${esc(blk)}</span>` : ''}<div class="row" style="margin-top:4px"><button class="btn sm" data-a="mealEdit" data-id="${m.id}">Edit</button></div></div>`; }).join('')}</div>`;
@@ -3187,7 +3208,7 @@ function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (l
 function getPath(obj, path) { return path.split('.').reduce((o, k) => o?.[k], obj); }
 function hasSample() { return S.measurements.some(m => m.sample) || S.workouts.some(w => w.sample) || Object.values(S.days).some(d => d.sample); }
 function foodOptions(sel = '', filter = () => true) { return S.foods.filter(filter).map(f => opt(f.id, f.n, sel)).join(''); }
-function unitOptions(f, sel) { if (!f) return ''; if (f.b === 'u') return opt('u', 'item', 'u'); return [opt(f.b === 'ml' ? 'ml' : 'g', f.b === 'ml' ? 'ml' : 'g', sel), ...(f.m || []).map(m => opt(m[0], `${m[0]} (${m[1]} g)`, sel))].join(''); }
+function unitOptions(f, sel) { if (!f) return ''; if (f.b === 'u') return opt('u', 'item', 'u'); return [opt(f.b === 'ml' ? 'ml' : 'g', f.b === 'ml' ? 'ml' : 'g', sel), ...(f.m || []).map(m => opt(m[0], `${m[0]} (${m[1]} ${f.b === "ml" ? "ml" : "g"})`, sel))].join(''); }
 
 // ---------- item editor used by several modals ----------
 function itemsEditor(key, items) {
@@ -3352,7 +3373,7 @@ const A = {
   },
   favFood(el) { const a = S.profile.favorites, id = el.dataset.id, i = a.indexOf(id); i >= 0 ? a.splice(i, 1) : a.push(id); Store.save('profile'); el.classList.toggle('on', a.includes(id)); el.setAttribute('aria-pressed', a.includes(id)); },
   lfSlot(el) { window._lf.slot = el.dataset.v; $$('#modal .seg button').forEach(b => { if (b.dataset.a === 'lfSlot') b.classList.toggle('on', b.dataset.v === el.dataset.v); }); },
-  lfAdd(el) { const f = F(el.dataset.id); window._ie.lf.push({ f: f.id, a: f.b === 'u' ? 1 : f.m?.length ? 1 : 100, u: f.b === 'u' ? 'u' : f.m?.length ? f.m[0][0] : (f.b === 'ml' ? 'ml' : 'g') }); refreshItemsEditor('lf'); },
+  lfAdd(el) { const f = F(el.dataset.id); if (!f) { toast('That food couldn\'t be found. Try searching again.'); return; } window._ie.lf.push({ f: f.id, a: f.b === 'u' ? 1 : f.m?.length ? 1 : 100, u: f.b === 'u' ? 'u' : f.m?.length ? f.m[0][0] : (f.b === 'ml' ? 'ml' : 'g') }); refreshItemsEditor('lf'); },
   lfSave() {
     const items = window._ie.lf.filter(i => +i.a > 0); if (!items.length) { toast('Add at least one food.'); return; }
     const L = window._lf, name = $('#lf-name')?.value.trim() || items.map(i => F(i.f).n).join(', ');
@@ -3456,10 +3477,11 @@ const A = {
   // ---- foods / meals database ----
   foodCat(el) { S.ui.foodCat = el.dataset.v; render(); },
   foodEdit(el) {
+    window._lfReturn = !el?.dataset?.id && document.getElementById('lf-q') ? { slot: window._lf?.slot, k: window._lf?.k, items: deep(window._ie?.lf || []), q: $('#lf-q')?.value || '' } : null;
     const f = el?.dataset?.id ? F(el.dataset.id) : { id: '', n: '', cat: 'protein', b: 'g', k: '', p: '', c: '', f: '', m: [], tags: [], animal: null, src: 'label' };
     const p = S.profile;
     openModal(f.id ? `Edit ${esc(f.n)}` : 'Add food', `<form class="stack" data-form="foodSave" id="food-form"><input type="hidden" name="id" value="${f.id}">
-      <label class="field"><span>Name</span><input class="input" name="n" required value="${esc(f.n)}"></label>
+      <label class="field"><span>Name</span><input class="input" name="n" required value="${esc(f.n || window._lfReturn?.q || '')}"></label>
       <div class="fgrid"><label class="field"><span>Category</span><select class="input" name="cat">${[['protein','Protein'],['dairy','Dairy'],['carb','Carbs / grains'],['fruit','Fruit'],['veg','Vegetables'],['fat','Fats & nuts'],['sweet','Sweets'],['meal','Mixed dish'],['restaurant','Restaurant item']].map(([v, l]) => opt(v, l, f.cat)).join('')}</select></label>
       <label class="field"><span>Values are per</span><select class="input" name="b">${opt('g', '100 g', f.b)}${opt('ml', '100 ml', f.b)}${opt('u', '1 item / portion', f.b)}</select></label>
       <label class="field"><span>Source</span><select class="input" name="src">${opt('label', 'Product label', f.src)}${opt('est', 'Estimate', f.src)}${opt('custom', 'My own numbers', f.src)}</select></label>
@@ -3848,7 +3870,14 @@ const FORMS = {
     if (d.id) S.foods = S.foods.map(x => x.id === id ? food : x); else S.foods.push(food);
     const p = S.profile, setIn = (key, on) => { const a = p[key], i = a.indexOf(id); if (on && i < 0) a.push(id); if (!on && i >= 0) a.splice(i, 1); };
     setIn('dislikes', d.dis); setIn('favorites', d.fav); setIn('unavailable', d.una);
-    Store.save('foods', 'profile'); closeModal(); render(); toast('Food saved');
+    Store.save('foods', 'profile'); closeModal(); render();
+    const R = window._lfReturn; window._lfReturn = null;
+    if (R && !d.id) { // back to logging, with the new food already added
+      A.logFoodModal(); window._lf.slot = R.slot || window._lf.slot; window._lf.k = R.k || window._lf.k;
+      window._ie.lf = R.items; A.lfAdd({ dataset: { id } });
+      $$('#modal .seg button').forEach(b => { if (b.dataset.a === 'lfSlot') b.classList.toggle('on', b.dataset.v === window._lf.slot); });
+      toast(`${esc(food.n)} saved and added. Check the amount, then tap Log food.`);
+    } else toast('Food saved');
   },
   exSave(f) {
     const d = formData(f); if (!d.n.trim()) return;
