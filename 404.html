@@ -553,6 +553,8 @@ const SEED_FOODS_RAW = [
   ['toast','Toast, white','carb','g',265,9,49,3.2,[['slice',25]],[],null],
   ['toast_br','Toast, brown','carb','g',250,10,43,3.5,[['slice',28]],[],null],
   ['tortilla','Tortilla wrap','carb','g',310,8,52,7.5,[['wrap',60]],[],null],
+  ['tortilla_my','My tortilla (pack label)','carb','g',290.3,8.06,50,5.65,[['tortilla',62]],[],null],
+  ['onion_pepper','Onion & peppers, sautéed','veg','g',35,1,8,0.2,[['handful',50]],[],null],
   ['rice','Rice, cooked','carb','g',130,2.7,28,0.3,[['cup',160]],[],null],
   ['rice_egy','Rice with vermicelli, cooked','carb','g',155,3,30,2.8,[['cup',170]],['egyptian'],null],
   ['pasta','Pasta, cooked','carb','g',158,5.8,31,0.9,[['cup',140]],[],null],
@@ -668,10 +670,11 @@ const FOOD_AR = {
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
   salad:'سلطة', veg_mix:'خضار', tomato_sauce:'صلصة طماطم', salsa:'صلصة دقة', molokhia:'ملوخية', cucumber:'خيار', lentil_soup:'شوربة عدس', croissant:'كرواسون', diet_soda:'بيبسي دايت زيرو', juice:'عصير', soda:'بيبسي كولا مشروب غازي',
   chicken_raw:'فراخ صدور نيئة', beef_raw:'لحمة نيئة', mince_raw:'لحمة مفرومة نيئة', rice_raw:'رز نيء ناشف', pasta_dry:'مكرونة ناشفة نيئة', potato_raw:'بطاطس نيئة', lentils_dry:'عدس ناشف', chickpeas_dry:'حمص ناشف',
+  tortilla_my:'تورتيلا بتاعتي', onion_pepper:'بصل وفلفل',
   redbull:'ريد بول', redbull_sf:'ريد بول شوجر فري دايت', redbull_zero:'ريد بول زيرو دايت', monster:'مونستر', monster_ultra:'مونستر الترا زيرو دايت', monster_mango:'مونستر مانجو', fury:'فيوري', sting:'ستينج', twist:'تويست',
   r_koshary:'كشري', r_koshary_l:'كشري كبير', r_shawarma:'ساندوتش شاورما', r_shawarma_plate:'طبق شاورما فتة', r_grill_quarter:'ربع فرخة مشوية', r_grill_half:'نص فرخة مشوية', r_grill_breast_meal:'وجبة صدور مشوية', r_kofta_meal:'وجبة كفتة', r_hawawshi:'حواوشي', r_liver:'ساندوتش كبدة', r_pane:'ساندوتش بانيه', r_bechamel:'مكرونة بشاميل', r_pasta_chicken:'مكرونة فراخ', r_burger:'برجر', r_fried_chicken:'فراخ مقلية', r_pizza:'بيتزا', r_fries:'بطاطس محمرة', r_crepe:'كريب فراخ',
 };
-const LABEL_FOODS = ['redbull','redbull_sf','redbull_zero','monster','monster_ultra'];
+const LABEL_FOODS = ['tortilla_my','redbull','redbull_sf','redbull_zero','monster','monster_ultra'];
 const SEED_FOODS = SEED_FOODS_RAW.map(r => ({
   id: r[0], n: r[1], cat: r[2], b: r[3], k: r[4], p: r[5], c: r[6], f: r[7],
   m: r[8], tags: r[9], animal: r[10], src: LABEL_FOODS.includes(r[0]) ? 'label' : 'est', ar: FOOD_AR[r[0]] || '',
@@ -1011,7 +1014,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:7, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:8, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1024,6 +1027,15 @@ const SEED_REMINDERS = [
 
 // Paula's own measurements, told in chat on Oct 26, 2026
 const SEED_MEASUREMENTS = [{ id:'m-2026-10-26', date:'2026-10-26', kg:102, bf:35, bfMethod:'Visual estimate', notes:'Morning weigh-in. Body fat ~32–37% estimated from photos, not a measurement.' }];
+
+// Paula's steak day (Nov 7, 2026), tuned to 2,100 kcal / 170 g protein
+const STEAK_DAY = [
+  { id:'sd_b', n:'Eggs, toast & cheddar + skim milk', slot:['breakfast'], items:[['eggs',2,'large egg'],['toast',60,'g'],['cheddar',20,'g'],['milk_skim',250,'ml']], prep:'Scramble or fry the eggs with no added oil.' },
+  { id:'sd_l', n:'Steak shawarma wraps', slot:['lunch','dinner'], items:[['beef',180,'g'],['tortilla_my',2,'tortilla'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Slice the steak thin, sear with onion and peppers in a dry or lightly oiled pan. Weigh the steak after cooking.' },
+  { id:'sd_s', n:'Whey & skim milk', slot:['snack'], items:[['whey',1,'scoop'],['milk_skim',250,'ml']], prep:'' },
+  { id:'sd_d', n:'Steak wrap & big salad', slot:['dinner','lunch'], items:[['beef',180,'g'],['tortilla_my',1,'tortilla'],['salad',250,'g']], prep:'One tortilla, the rest of the plate is salad. Trim visible fat from the steak.' },
+].map(m => ({ ...m, ctx:['home'], cook: m.id === 'sd_b' || m.id === 'sd_s' ? 0 : 1, min: 15, cost: 3, core: 1, plan: 1 }));
+SEED_MEALS.push(...STEAK_DAY);
 
 /* ============================================================
    FORGE — core: utilities, state, persistence (Claude account
@@ -4147,7 +4159,14 @@ function normalize() {
   for (let w = 0; w < 7; w++) if (!S.plan[w]) S.plan[w] = generatePlanDay(w, 1000 + w * 37);
   if (needV2) personalize();
   else if (needV6) { S.profile.theme = 'light'; S.profile.pv = 6; setTimeout(() => Store.save('profile'), 200); }
-  if ((S.profile.pv || 0) < 7 && S.profile.onboarded) { S.profile.pv = 7; const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
+  const pv0 = S.profile.pv || 0; if (S.profile.onboarded && pv0 < 8) S.profile.pv = 8;
+  if (pv0 < 8 && S.profile.onboarded) {
+    for (const m of STEAK_DAY) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) });
+    const k = '2026-11-07';
+    if (today() === k) { const d = getDay(k); ['breakfast','lunch','snack','dinner'].forEach((sl, i) => { if (!d.meals.some(e => e.planSlot === sl)) { const m = MEAL(STEAK_DAY[i].id); d.planEdits[sl] = { m: m.id, name: m.n, items: deep(m.items) }; } }); }
+    setTimeout(() => { Store.save('meals', 'foods', dayBucket(today()), 'profile'); if (today() === k) toast('Today\'s plan is your steak day: about 2,160 kcal and 181 g protein.', { ms: 8000 }); }, 400);
+  }
+  if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
 }
 async function init() {
