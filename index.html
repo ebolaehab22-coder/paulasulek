@@ -1127,15 +1127,29 @@ const Store = {
   async openIDB() {
     try {
       if (!('indexedDB' in window)) throw 0;
-      this.idb = await new Promise((res, rej) => {
+      // phones can be slow to open storage after a restart: wait longer and retry instead of starting empty
+      const once = ms => new Promise((res, rej) => {
         const r = indexedDB.open('forge', 1);
-        r.onupgradeneeded = () => { const d = r.result; d.createObjectStore('kv', { keyPath: 'k' }); d.createObjectStore('photos', { keyPath: 'id' }); };
-        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
-        setTimeout(() => rej('timeout'), 4000);
+        r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv', { keyPath: 'k' }); if (!d.objectStoreNames.contains('photos')) d.createObjectStore('photos', { keyPath: 'id' }); };
+        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => {};
+        setTimeout(() => rej('timeout'), ms);
       });
+      let err;
+      for (const ms of [8000, 12000, 15000]) { try { this.idb = await once(ms); break; } catch (e) { err = e; } }
+      if (!this.idb) throw err;
       this.local = 'idb';
     } catch { this.idb = null; this.local = 'none'; }
   },
+  // second copy of everything (except photos) in localStorage, so one storage failing doesn't lose the log
+  mirrorTimer: null,
+  mirror() {
+    clearTimeout(this.mirrorTimer);
+    this.mirrorTimer = setTimeout(() => {
+      try { const data = {}; for (const b of this.allBuckets()) data[b] = bucketValue(b); localStorage.setItem('ps-mirror', JSON.stringify({ app: 'FORGE', version: 1, exported: new Date().toISOString(), data })); } catch {}
+    }, 800);
+  },
+  readMirror() { try { const j = JSON.parse(localStorage.getItem('ps-mirror') || 'null'); return j && j.data ? j : null; } catch { return null; } },
+  async persist() { try { if (navigator.storage?.persist && !(await navigator.storage.persisted())) await navigator.storage.persist(); } catch {} },
   tx(store, mode, fn) {
     return new Promise((res, rej) => {
       if (!this.idb) return rej('no idb');
@@ -1162,7 +1176,7 @@ const Store = {
   save(...buckets) {
     const now = Date.now();
     for (const b of buckets) { S.meta[b] = now; this.writeLocal(b); this.pending.add(b); }
-    this.lastSave = now; this.writePending(); this.schedulePush(); updateSaveBadge();
+    this.lastSave = now; this.writePending(); this.mirror(); this.schedulePush(); updateSaveBadge();
   },
   saveAll() { this.save(...this.allBuckets()); },
   allBuckets() {
@@ -2899,7 +2913,8 @@ function vOnboarding() {
     <div class="fgrid"><label class="field"><span>Name</span><input class="input" id="o-name" data-c="setP" data-path="name" value="${esc(p.name)}"></label>${num('age', 'Age (optional)', p.age, 1)}${num('heightCm', 'Height', p.heightCm, 1, 'cm')}${num('currentWeight', "Today's weight (optional)", p.currentWeight ?? (S.measurements.find(m => m.date === today())?.kg ?? ''), 0.1, 'kg')}${num('goalWeight', 'Goal weight (optional)', p.goalWeight, 0.5, 'kg')}</div>
     <div class="field"><span>Equipment you can use</span><div class="chips">${EQUIP_OPTS.map(([v, l]) => `<button class="chip ${(p.equipment || []).includes(v) ? 'on' : ''}" data-a="equipT" data-v="${v}">${l}</button>`).join('')}</div></div>
     <label class="field"><span>Primary goal</span><input class="input" id="o-goal" data-c="setP" data-path="goal" value="${esc(p.goal)}"></label>
-    <div class="note">Your last reported weight (~${fmtW(p.historical.kg, 2)} after breakfast) is kept as a historical note only. Your trend starts with your first dated weigh-in.</div>`;
+    <div class="note">Your last reported weight (~${fmtW(p.historical.kg, 2)} after breakfast) is kept as a historical note only. Your trend starts with your first dated weigh-in.</div>
+    <div class="note">Used PaulaSulek before? <button class="btn sm" data-a="importModal">${ic('upload')}Restore from a backup file</button></div>`;
   if (st === 1) body = `<h1>Daily targets</h1><p class="muted" style="margin:0">Pre-filled defaults from what you told me (labeled as defaults); change any of them. Starting points, not medical advice. Weekly reviews tell you when a change might help; PaulaSulek never changes them for you.</p>
     <div class="fgrid">${num('kcal', 'Calories', p.kcal, 10, 'kcal')}${num('protein', 'Protein', p.protein, 5, 'g')}${num('fat', 'Fat guide', p.fat, 5, 'g')}${num('carbs', 'Carbs guide', p.carbs, 5, 'g')}${num('waterMl', 'Water', p.waterMl, 250, 'ml')}${num('sleepTarget', 'Sleep goal', p.sleepTarget, 0.5, 'h')}</div>
     <div class="fgrid">${num('steps.start', 'Steps: starting goal', p.steps.start, 500)}${num('steps.inc', 'Add per week', p.steps.inc, 250)}${num('steps.max', 'Step goal cap', p.steps.max, 500)}</div>`;
@@ -3731,7 +3746,7 @@ const A = {
     else { Store.cloud = 'off'; Store.unsub?.(); Store.unsub = null; toast('Account sync off. New changes stay on this device.'); }
     render();
   },
-  exportJSON() { const data = {}; for (const b of Store.allBuckets()) data[b] = bucketValue(b); offerFile(`paulasulek-backup-${today()}.json`, JSON.stringify({ app: 'FORGE', version: 1, exported: new Date().toISOString(), data }, null, 1), 'application/json'); },
+  exportJSON() { const data = {}; for (const b of Store.allBuckets()) data[b] = bucketValue(b); try { localStorage.setItem('ps-lastExport', Date.now()); } catch {} offerFile(`paulasulek-backup-${today()}.json`, JSON.stringify({ app: 'FORGE', version: 1, exported: new Date().toISOString(), data }, null, 1), 'application/json'); },
   exportCSV(el) {
     const v = el.dataset.v, q = x => `"${String(x ?? '').replace(/"/g, '""')}"`; let rows;
     if (v === 'weights') rows = [['date','weight_kg','waist_cm','chest_cm','arm_cm','hip_cm','bodyfat_est_pct','bf_method','notes','sample']].concat(S.measurements.slice().sort((a, b) => a.date < b.date ? -1 : 1).map(m => [m.date, m.kg, m.waist, m.chest, m.arm, m.hip, m.bf, m.bfMethod, m.notes, m.sample ? 'yes' : '']));
@@ -4172,9 +4187,22 @@ function normalize() {
 async function init() {
   root().innerHTML = '<div class="loading">PAULASULEK · LOADING</div>';
   await Store.openIDB();
+  Store.persist();
   seedState();
   let local = false; try { local = await Store.loadLocal(); } catch {}
+  let restored = false;
+  if (!local || !S.profile.onboarded) {
+    // storage came back empty: use the second copy before ever showing setup again
+    const m = Store.readMirror();
+    if (m && m.data.profile?.onboarded) { try { S.days = {}; S.workouts = []; for (const [b, v] of Object.entries(m.data)) applyBucket(b, v); restored = true; local = true; } catch {} }
+  }
+  if (!S.profile.onboarded && Object.keys(S.days).some(k => !S.days[k].sample && (S.days[k].meals || []).length)) S.profile.onboarded = true;
+  if (!Store.idb && !window.claude) {
+    root().innerHTML = `<div class="onb"><div class="logo"><img class="logo-img" src="${APP_LOGO}" alt="" width="40" height="40"><b>PaulaSulek</b></div><h1>Your data is safe. The phone's storage didn't open yet.</h1><p class="muted">This can happen right after the phone restarts or when it's low on memory. Close the app fully and open it again, or tap Try again.</p><button class="btn pri lg" onclick="location.reload()">Try again</button></div>`;
+    return;
+  }
   normalize(); applyTheme();
+  if (restored) { Store.saveAll(); setTimeout(() => toast('Your data was restored from the backup copy on this phone.', { ms: 9000 }), 600); }
   S._today = today();
   const cloud = Store.connectCloud().then(changed => { normalize(); return changed; });
   // first visit on this device: give the account a moment to answer so onboarding isn't shown twice
@@ -4183,6 +4211,10 @@ async function init() {
   cloud.then(() => { normalize(); softRender(); updateSaveBadge(); if (Store.pending.size) Store.push(); });
   if (S.active) toast(`Workout in progress: ${esc(S.active.name)}. Your sets were saved.`, { action: () => A.openLive(), label: 'Resume', ms: 9000 });
   Coach.init();
+  if (!window.claude && S.profile.onboarded) {
+    const last = +(localStorage.getItem('ps-lastExport') || 0);
+    if (Date.now() - last > 7 * 864e5) setTimeout(() => toast('Save a backup file of your data (once a week keeps it safe).', { action: () => A.exportJSON(), label: 'Save backup', ms: 12000 }), 2500);
+  }
   setInterval(tick, 500);
   setInterval(() => {
     if (today() !== S._today) { S._today = today(); S.ui.nutDate = null; S.ui.eat = null; softRender(); toast(`New day started at ${fmtHM(pad(dayStart()) + ':00')}: today\'s log starts fresh.`); }
