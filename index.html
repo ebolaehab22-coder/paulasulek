@@ -1014,7 +1014,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:8, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:9, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1035,7 +1035,26 @@ const STEAK_DAY = [
   { id:'sd_s', n:'Whey & skim milk', slot:['snack'], items:[['whey',1,'scoop'],['milk_skim',250,'ml']], prep:'' },
   { id:'sd_d', n:'Steak wrap & big salad', slot:['dinner','lunch'], items:[['beef',180,'g'],['tortilla_my',1,'tortilla'],['salad',250,'g']], prep:'One tortilla, the rest of the plate is salad. Trim visible fat from the steak.' },
 ].map(m => ({ ...m, ctx:['home'], cook: m.id === 'sd_b' || m.id === 'sd_s' ? 0 : 1, min: 15, cost: 3, core: 1, plan: 1 }));
-SEED_MEALS.push(...STEAK_DAY);
+// everyday versions of the steak day: swap the meat for chicken breast and/or the tortillas for pasta
+const DAY_VARIANTS = [
+  { id:'sd_l_c', n:'Chicken shawarma wraps', slot:['lunch','dinner'], items:[['chicken',200,'g'],['tortilla_my',2,'tortilla'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Slice the chicken breast thin, sear with onion and peppers. Weigh the chicken after cooking.' },
+  { id:'sd_d_c', n:'Chicken wrap & big salad', slot:['dinner','lunch'], items:[['chicken',200,'g'],['tortilla_my',1,'tortilla'],['salad',250,'g']], prep:'One tortilla, the rest of the plate is salad.' },
+  { id:'sd_l_p', n:'Steak, peppers & pasta with cheddar', slot:['lunch','dinner'], items:[['beef',180,'g'],['pasta',230,'g'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Same steak and peppers as the wraps, over pasta. Weigh pasta after boiling.' },
+  { id:'sd_d_p', n:'Steak, pasta & big salad', slot:['dinner','lunch'], items:[['beef',180,'g'],['pasta',115,'g'],['salad',250,'g']], prep:'Weigh pasta after boiling. Trim visible fat from the steak.' },
+  { id:'sd_l_cp', n:'Chicken, peppers & pasta with cheddar', slot:['lunch','dinner'], items:[['chicken',200,'g'],['pasta',230,'g'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Weigh chicken after cooking and pasta after boiling.' },
+  { id:'sd_d_cp', n:'Chicken, pasta & big salad', slot:['dinner','lunch'], items:[['chicken',200,'g'],['pasta',115,'g'],['salad',250,'g']], prep:'Weigh chicken after cooking and pasta after boiling.' },
+].map(m => ({ ...m, ctx:['home'], cook: 1, min: 20, cost: 3, core: 1, plan: 1 }));
+SEED_MEALS.push(...STEAK_DAY, ...DAY_VARIANTS);
+// Nov 8 2026: Paula's everyday plan = the steak day, rotating steak/chicken and tortilla/pasta (Wed & Fri stay fasting)
+const EVERYDAY_WEEK = {
+  0: ['sd_b','sd_l_c','sd_s','sd_d_c'],   // Sun chicken + tortilla
+  1: ['sd_b','sd_l_p','sd_s','sd_d_p'],   // Mon steak + pasta
+  2: ['sd_b','sd_l_cp','sd_s','sd_d_cp'], // Tue chicken + pasta
+  3: ['sd_b','sd_l','sd_s','sd_d'],       // Wed (fasting version used when fasting is on)
+  4: ['sd_b','sd_l','sd_s','sd_d'],       // Thu steak + tortilla
+  5: ['sd_b','sd_l_c','sd_s','sd_d_c'],   // Fri (fasting version used when fasting is on)
+  6: ['sd_b','sd_l','sd_s','sd_d'],       // Sat steak + tortilla
+};
 
 /* ============================================================
    FORGE — core: utilities, state, persistence (Claude account
@@ -1101,7 +1120,7 @@ function seedState() {
   S.plan = paulaWeek();
 }
 // Paula's own weekly plan, exact grams (scale 1)
-function paulaWeek() { const out = {}, fa = S.profile?.fasting; for (const [wd, ids0] of Object.entries(PAULA_WEEK)) { const ids = fa?.enabled && fa.days.includes(+wd) && PAULA_FAST_WEEK[wd] ? PAULA_FAST_WEEK[wd] : ids0; out[wd] = {}; ['breakfast','lunch','snack','dinner'].forEach((s, i) => out[wd][s] = { m: ids[i], s: 1 }); } return out; }
+function paulaWeek() { const out = {}, fa = S.profile?.fasting; for (const [wd, ids0] of Object.entries(EVERYDAY_WEEK)) { const ids = fa?.enabled && fa.days.includes(+wd) && PAULA_FAST_WEEK[wd] ? PAULA_FAST_WEEK[wd] : ids0; out[wd] = {}; ['breakfast','lunch','snack','dinner'].forEach((s, i) => out[wd][s] = { m: ids[i], s: 1 }); } return out; }
 
 const getDay = k => S.days[k] || (S.days[k] = { d: k, meals: [], water: 0, steps: null, sleep: null, energy: null, hunger: null, sore: null, rhr: null, rest: false, act: [], hab: {}, planEdits: {}, notes: '' });
 const peekDay = k => S.days[k] || null;
@@ -4180,6 +4199,12 @@ function normalize() {
     const k = '2026-11-07';
     if (today() === k) { const d = getDay(k); ['breakfast','lunch','snack','dinner'].forEach((sl, i) => { if (!d.meals.some(e => e.planSlot === sl)) { const m = MEAL(STEAK_DAY[i].id); d.planEdits[sl] = { m: m.id, name: m.n, items: deep(m.items) }; } }); }
     setTimeout(() => { Store.save('meals', 'foods', dayBucket(today()), 'profile'); if (today() === k) toast('Today\'s plan is your steak day: about 2,160 kcal and 181 g protein.', { ms: 8000 }); }, 400);
+  }
+  if (S.profile.onboarded && pv0 < 9) {
+    S.profile.pv = 9;
+    for (const m of [...STEAK_DAY, ...DAY_VARIANTS]) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) });
+    S.plan = paulaWeek();
+    setTimeout(() => { Store.save('meals', 'plan', 'profile'); toast('Your everyday plan is the steak day now: steak or chicken, tortilla or pasta. Wed & Fri stay fasting.', { ms: 9000 }); }, 400);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
