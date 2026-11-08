@@ -590,6 +590,7 @@ const SEED_FOODS_RAW = [
   ['white_cheese','White cheese, light','dairy','g',160,15,3,9.5,[['tbsp',20]],['egyptian'],'dairy'],
   ['cottage','Cottage cheese','dairy','g',98,11,3.4,4.3,[['cup',225]],[],'dairy'],
   ['feta','Feta cheese','dairy','g',264,14,4,21,[['slice',30],['tbsp',20]],[],'dairy'],
+  ['white_full','White soft cheese, full cream, low salt','dairy','g',250,12,3,21,[['tbsp',20]],['egyptian'],'dairy'],
   ['istanbuli','Istanbuli white cheese','dairy','g',290,15,3,24,[['tbsp',20]],['egyptian'],'dairy'],
   ['hp_yogurt','High-protein yogurt','dairy','g',62,10,4.5,0.3,[['tub',200]],[],'dairy'],
   ['milk_low','Milk, low-fat (1.5%)','dairy','ml',47,3.4,4.9,1.5,[['cup',250]],[],'dairy'],
@@ -666,7 +667,7 @@ const SEED_FOODS_RAW = [
 const FOOD_AR = {
   baladi:'عيش بلدي رغيف', fino:'عيش فينو', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
   chicken:'فراخ صدور دجاج مشوي', chicken_thigh:'فراخ ورك دجاج', beef:'لحمة حمراء قليلة الدهون لحم', mince:'لحمة مفرومة', kofta:'كفتة', kofta_lean:'كفتة قليلة الدهون', liver:'كبدة', sojuk:'سجق سجوق', kebab:'كباب', eggs:'بيض', egg_white:'بياض بيض', turkey:'تركي لانشون', whey:'واي بروتين سكوب', tuna:'تونة', fish:'سمك', tofu:'توفو', shawarma_home:'شاورما فراخ بيتي', burger_patty:'برجر لحمة', burger_bun:'عيش برجر',
-  greek:'زبادي يوناني', yogurt:'زبادي', hp_yogurt:'زبادي عالي البروتين', milk_skim:'لبن خالي الدسم', milk_low:'لبن قليل الدسم', milk:'لبن كامل الدسم حليب', roumy:'جبنة رومي', cheddar:'جبنة شيدر', white_cheese:'جبنة لايت بيضاء قريش', feta:'جبنة فيتا', istanbuli:'جبنة اسطنبولي بيضاء', cottage:'جبنة قريش كوتاج', yogurt_sauce:'صوص زبادي',
+  greek:'زبادي يوناني', yogurt:'زبادي', hp_yogurt:'زبادي عالي البروتين', milk_skim:'لبن خالي الدسم', milk_low:'لبن قليل الدسم', milk:'لبن كامل الدسم حليب', roumy:'جبنة رومي', cheddar:'جبنة شيدر', white_cheese:'جبنة لايت بيضاء قريش', feta:'جبنة فيتا', istanbuli:'جبنة اسطنبولي بيضاء', white_full:'جبنة بيضاء طرية كاملة الدسم قليلة الملح دومتي', cottage:'جبنة قريش كوتاج', yogurt_sauce:'صوص زبادي',
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
   salad:'سلطة', veg_mix:'خضار', tomato_sauce:'صلصة طماطم', salsa:'صلصة دقة', molokhia:'ملوخية', cucumber:'خيار', lentil_soup:'شوربة عدس', croissant:'كرواسون', diet_soda:'بيبسي دايت زيرو', juice:'عصير', soda:'بيبسي كولا مشروب غازي',
   chicken_raw:'فراخ صدور نيئة', beef_raw:'لحمة نيئة', mince_raw:'لحمة مفرومة نيئة', rice_raw:'رز نيء ناشف', pasta_dry:'مكرونة ناشفة نيئة', potato_raw:'بطاطس نيئة', lentils_dry:'عدس ناشف', chickpeas_dry:'حمص ناشف',
@@ -1014,7 +1015,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:9, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:10, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1030,7 +1031,7 @@ const SEED_MEASUREMENTS = [{ id:'m-2026-10-26', date:'2026-10-26', kg:102, bf:35
 
 // Paula's steak day (Nov 7, 2026), tuned to 2,100 kcal / 170 g protein
 const STEAK_DAY = [
-  { id:'sd_b', n:'Eggs, toast & cheddar + skim milk', slot:['breakfast'], items:[['eggs',2,'large egg'],['toast',60,'g'],['cheddar',20,'g'],['milk_skim',250,'ml']], prep:'Scramble or fry the eggs with no added oil.' },
+  { id:'sd_b', n:'Eggs, toast & white cheese + skim milk', slot:['breakfast'], items:[['eggs',2,'large egg'],['toast',60,'g'],['white_full',30,'g'],['milk_skim',250,'ml']], prep:'Scramble or fry the eggs with no added oil. 30 g cheese is about 1½ tablespoons.' },
   { id:'sd_l', n:'Steak shawarma wraps', slot:['lunch','dinner'], items:[['beef',180,'g'],['tortilla_my',2,'tortilla'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Slice the steak thin, sear with onion and peppers in a dry or lightly oiled pan. Weigh the steak after cooking.' },
   { id:'sd_s', n:'Whey & skim milk', slot:['snack'], items:[['whey',1,'scoop'],['milk_skim',250,'ml']], prep:'' },
   { id:'sd_d', n:'Steak wrap & big salad', slot:['dinner','lunch'], items:[['beef',180,'g'],['tortilla_my',1,'tortilla'],['salad',250,'g']], prep:'One tortilla, the rest of the plate is salad. Trim visible fat from the steak.' },
@@ -4205,6 +4206,12 @@ function normalize() {
     for (const m of [...STEAK_DAY, ...DAY_VARIANTS]) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) });
     S.plan = paulaWeek();
     setTimeout(() => { Store.save('meals', 'plan', 'profile'); toast('Your everyday plan is the steak day now: steak or chicken, tortilla or pasta. Wed & Fri stay fasting.', { ms: 9000 }); }, 400);
+  }
+  if (S.profile.onboarded && pv0 < 10) {
+    S.profile.pv = 10;
+    const seed = STEAK_DAY.find(m => m.id === 'sd_b'), cur = S.meals.find(m => m.id === 'sd_b');
+    if (cur) { cur.n = seed.n; cur.prep = seed.prep; cur.items = seed.items.map(i => ({ f: i[0], a: i[1], u: i[2] })); }
+    setTimeout(() => Store.save('meals', 'foods', 'profile'), 450);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
