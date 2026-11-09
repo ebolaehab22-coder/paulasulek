@@ -844,7 +844,7 @@ const PAULA_FAST_MEALS = [
 const PAULA_FAST_WEEK = { 3:['fw_b','fw_l','fw_s','fw_d'], 5:['ff_b','ff_l','ff_s','ff_d'] };
 SEED_MEALS.push(...PAULA_FAST_MEALS);
 
-const MUSCLES = ['Chest','Shoulders','Side delts','Rear delts','Lats','Upper back','Biceps','Triceps','Forearms','Quads','Hamstrings','Glutes','Core'];
+const MUSCLES = ['Chest','Shoulders','Side delts','Rear delts','Lats','Upper back','Biceps','Triceps','Forearms','Quads','Hamstrings','Glutes','Core','Obliques','Lower back'];
 const EQUIPMENT = ['Barbell','Dumbbell','Machine','Cable','EZ-bar','Bodyweight'];
 
 // Exercise library. q = YouTube search query (real search links, not guessed video IDs).
@@ -980,13 +980,37 @@ const SEED_EXERCISES = [
   { id:'incline_db_curl', n:'Incline Dumbbell Curl', pm:['Biceps'], sm:[], eq:'Dumbbell', type:'Isolation', diff:'Beginner',
     setup:'Bench at 45–60°, arms hanging.', steps:['Curl without swinging.','Lower to a full stretch.'], breath:'Exhale on the curl.',
     mistakes:['Shoulders rolling forward'], safety:'Start light: the stretch is demanding.', rec:'2 sets × 10–15', alt:['ez_curl'], q:'incline dumbbell curl form' },
+  { id:'cable_crunch', n:'Cable Crunch', pm:['Core'], sm:['Obliques'], eq:'Cable', type:'Isolation', diff:'Beginner',
+    setup:'Rope on the high pulley. Kneel facing the stack, hold the rope beside your head, hips stay high and still.',
+    steps:['Curl your ribs down toward your hips, rounding the spine.','Squeeze the abs hard at the bottom for a second.','Return slowly until you feel the stretch, without letting the weight lift you.'],
+    breath:'Breathe out hard as you crunch, in on the way up.',
+    mistakes:['Sitting the hips back so it becomes a hip hinge','Pulling with the arms','Going so heavy the reps get short'],
+    safety:'Pick a weight you control for full reps. Your hips should not move.', rec:'3 sets × 10–15', alt:['pallof'], q:'kneeling cable crunch form' },
+  { id:'back_ext', n:'Back Extension (45°)', pm:['Lower back'], sm:['Glutes','Hamstrings'], eq:'Bench', type:'Isolation', diff:'Beginner',
+    setup:'Set the pad just below your hip bones so you can bend freely at the hips. Feet locked in, arms crossed on the chest.',
+    steps:['Lower your torso slowly until you feel a stretch in the hamstrings.','Rise until your body is in one straight line with the legs.','Pause for a second, then lower.'],
+    breath:'Breathe in on the way down, out on the way up.',
+    mistakes:['Swinging up fast','Arching past a straight line at the top','Pad too high, so you can\'t bend'],
+    safety:'Stop at a straight body line; never over-arch. Hold a plate on the chest only once 15 easy reps are easy.', rec:'3 sets × 10–15', alt:['rdl'], q:'45 degree back extension form' },
+  { id:'db_side_bend', n:'Dumbbell Side Bend', pm:['Obliques'], sm:['Core'], eq:'Dumbbell', type:'Isolation', diff:'Beginner',
+    setup:'Stand tall with one dumbbell in one hand, the other hand on your hip or behind your head.',
+    steps:['Bend sideways toward the dumbbell, straight down, not forward.','Use the opposite side of your waist to pull back up to standing.','Do all reps on one side, then switch.'],
+    breath:'Breathe in going down, out coming up.',
+    mistakes:['Holding a dumbbell in each hand (they cancel out)','Twisting or leaning forward','Bouncing at the bottom'],
+    safety:'Slow and controlled; a moderate weight is enough.', rec:'3 sets × 12–15 each side', alt:['pallof'], q:'dumbbell side bend form' },
+  { id:'pallof', n:'Pallof Press', pm:['Core'], sm:['Obliques'], eq:'Cable', type:'Isolation', diff:'Beginner',
+    setup:'Handle at chest height. Stand side-on to the cable, step out until there is tension, feet shoulder-width, hands at the chest.',
+    steps:['Press the handle straight out in front of the chest.','Hold for 2 seconds without letting the cable twist you.','Bring it back to the chest. Do all reps, then turn around for the other side.'],
+    breath:'Breathe out as you press, keep breathing during the hold.',
+    mistakes:['Letting the hips or shoulders turn toward the machine','Standing too close so there is no tension','Rushing the hold'],
+    safety:'A light weight is enough; the work is resisting the twist.', rec:'3 sets × 10–12 each side', alt:['cable_crunch'], q:'pallof press form' },
 ];
 
 const SEED_TEMPLATES = [
-  { id:'pushA', n:'Push A', ex:[['bench',2,6,10],['incline_db',2,8,12],['machine_shoulder',2,8,12],['lateral_raise',2,12,20],['tri_pushdown',2,10,15],['leg_ext',2,12,15]] },
-  { id:'pullA', n:'Pull A', ex:[['lat_pulldown',2,8,12],['seated_row',2,8,12],['rear_delt_fly',2,12,20],['ez_curl',2,8,12],['hammer_curl',2,10,15]] },
-  { id:'pushB', n:'Push B', ex:[['incline_machine',2,8,12],['chest_press',2,8,12],['cable_fly',2,12,15],['lateral_raise',3,12,20],['oh_tri_ext',2,10,15],['leg_curl',2,10,15]] },
-  { id:'pullB', n:'Pull B', ex:[['ng_pulldown',2,8,12],['one_arm_row',2,10,12],['straight_arm',2,12,15],['reverse_pec',2,12,20],['preacher',2,10,15],['cable_curl',2,10,15]] },
+  { id:'pushA', n:'Push A', ex:[['bench',2,6,10],['incline_db',2,8,12],['machine_shoulder',2,8,12],['lateral_raise',2,12,20],['tri_pushdown',2,10,15],['leg_ext',2,12,15],['cable_crunch',3,10,15]] },
+  { id:'pullA', n:'Pull A', ex:[['lat_pulldown',2,8,12],['seated_row',2,8,12],['rear_delt_fly',2,12,20],['ez_curl',2,8,12],['hammer_curl',2,10,15],['back_ext',3,10,15]] },
+  { id:'pushB', n:'Push B', ex:[['incline_machine',2,8,12],['chest_press',2,8,12],['cable_fly',2,12,15],['lateral_raise',3,12,20],['oh_tri_ext',2,10,15],['leg_curl',2,10,15],['pallof',3,10,12]] },
+  { id:'pullB', n:'Pull B', ex:[['ng_pulldown',2,8,12],['one_arm_row',2,10,12],['straight_arm',2,12,15],['reverse_pec',2,12,20],['preacher',2,10,15],['cable_curl',2,10,15],['db_side_bend',3,12,15]] },
 ].map(t => ({ id:t.id, n:t.n, ex:t.ex.map(e => ({ x:e[0], sets:e[1], lo:e[2], hi:e[3] })) }));
 
 // weekday index: 0 Sun … 6 Sat. type: workout | rest | activity
@@ -1015,7 +1039,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:10, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:11, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1943,7 +1967,13 @@ function frontPose(p) {
   const c = 100, sh = [[c - 17, 38], [c + 17, 38]], hip = [[c - 10, 82], [c + 10, 82]];
   const hR = p.hand, hL = [2 * c - p.hand[0], p.hand[1]];
   const [eR, aR] = ik(sh[1], hR, LEN.UA, LEN.FA, p.es ?? -1), [eL, aL] = ik(sh[0], hL, LEN.UA, LEN.FA, -(p.es ?? -1));
-  return { sh, hip, head: [c, 22], eR, aR, eL, aL, kL: [c - 12, 116], kR: [c + 12, 116], fL: [c - 14, 150], fR: [c + 14, 150] };
+  const out = { sh, hip, head: [c, 22], eR, aR, eL, aL, kL: [c - 12, 116], kR: [c + 12, 116], fL: [c - 14, 150], fR: [c + 14, 150] };
+  if (p.lean) { // side bend: tilt the upper body around the pelvis
+    const r = p.lean * Math.PI / 180, cx = c, cy = 82, rot = q => [cx + (q[0] - cx) * Math.cos(r) - (q[1] - cy) * Math.sin(r), cy + (q[0] - cx) * Math.sin(r) + (q[1] - cy) * Math.cos(r)];
+    out.sh = sh.map(rot); out.head = rot(out.head); ['eR', 'aR', 'eL', 'aL'].forEach(k => out[k] = rot(out[k])); out.neck = rot([c, 38]);
+  }
+  out.neck = out.neck || [c, 38]; out.pelvis = [c, 82];
+  return out;
 }
 // pattern library: s/e = start/end pose; hi = the moving part to highlight; scene = props
 const PATTERNS = {
@@ -1970,6 +2000,10 @@ const PATTERNS = {
   rdl:        { v: 'side', s: { hip: [100, 80], T: 178, handRel: [0, 48], foot: [98, 150], es: 1, ks: -1 }, e: { hip: [86, 82], T: 100, handRel: [0, 48], foot: [98, 150], es: 1, ks: -1 }, scene: 'floor', prop: 'bar', hi: 'leg' },
   pullup:     { v: 'side', s: { hip: [100, 106], T: 180, hand: [100, 10], footRel: [-10, 66], es: 1 }, e: { hip: [86, 56], T: 180, hand: [100, 10], footRel: [-12, 64], es: 1 }, scene: 'bar', prop: 'none', hi: 'arm' },
   pushup:     { v: 'side', s: { hip: [99, 120], T: 244, hand: [58, 150], foot: [160, 150], es: 1, ks: 1 }, e: { hip: [93, 138], T: 260, hand: [58, 150], foot: [160, 150], es: 1, ks: 1 }, scene: 'floor', prop: 'none', hi: 'arm' },
+  cablecrunch:{ v: 'side', s: { hip: [100, 114], T: 166, handRel: [8, -6], foot: [62, 150], es: -1, ks: -1 }, e: { hip: [100, 114], T: 112, handRel: [8, -6], foot: [62, 150], es: -1, ks: -1 }, scene: 'cableHigh', prop: 'handle', hi: 'core' },
+  backext:    { v: 'side', s: { hip: [104, 98], T: 70, handRel: [-8, 6], foot: [56, 146], es: 1, ks: -1 }, e: { hip: [104, 98], T: 138, handRel: [-8, 6], foot: [56, 146], es: 1, ks: -1 }, scene: 'hyper', prop: 'none', hi: 'core' },
+  pallof:     { v: 'side', s: { hip: [96, 80], T: 180, hand: [112, 66], foot: [98, 150], es: 1 }, e: { hip: [96, 80], T: 180, hand: [144, 64], foot: [98, 150], es: 1 }, scene: 'floor', prop: 'handle', hi: 'core' },
+  sidebend:   { v: 'front', s: { hand: [124, 108], es: -1, lean: 14 }, e: { hand: [124, 108], es: -1, lean: -5 }, scene: 'floor', prop: 'db1', hi: 'core' },
   raise:      { v: 'front', s: { hand: [124, 84] }, e: { hand: [162, 40] }, scene: 'floor', prop: 'db', hi: 'arm' },
   fly:        { v: 'front', s: { hand: [164, 42] }, e: { hand: [108, 64] }, scene: 'cableFly', prop: 'handle', hi: 'arm' },
   pecdeck:    { v: 'front', s: { hand: [164, 42] }, e: { hand: [108, 60] }, scene: 'floor', prop: 'handle', hi: 'arm' },
@@ -1979,7 +2013,7 @@ const EX_PATTERN = { bench: 'bench', db_bench: 'bench', incline_db: 'incline', i
   lateral_raise: 'raise', cable_lateral: 'raise', tri_pushdown: 'pushdown', oh_tri_ext: 'ohext', skullcrusher: 'skull', leg_ext: 'legext', leg_curl: 'legcurl',
   lat_pulldown: 'pulldown', ng_pulldown: 'pulldown', seated_row: 'row', one_arm_row: 'row', db_row: 'dbrow', straight_arm: 'straightarm', face_pull: 'facepull',
   rear_delt_fly: 'reverse', reverse_pec: 'reverse', cable_fly: 'fly', pec_deck: 'pecdeck', ez_curl: 'curl', hammer_curl: 'curl', cable_curl: 'cablecurl', preacher: 'preacher', incline_db_curl: 'inclinecurl',
-  goblet_squat: 'squat', leg_press: 'legpress', rdl: 'rdl', pull_up: 'pullup', assisted_pullup: 'pullup' };
+  cable_crunch: 'cablecrunch', back_ext: 'backext', db_side_bend: 'sidebend', pallof: 'pallof', goblet_squat: 'squat', leg_press: 'legpress', rdl: 'rdl', pull_up: 'pullup', assisted_pullup: 'pullup' };
 function patternFor(ex) {
   if (EX_PATTERN[ex.id]) return EX_PATTERN[ex.id];
   const m = ex.pm?.[0] || '', n = (ex.n || '').toLowerCase();
@@ -2011,15 +2045,16 @@ function exArt(exOrId, size = 140, o = {}) {
   if (S === 'rowCable') scene = `${floor}<rect x="40" y="126" width="80" height="6" rx="3" fill="${eq}"/><rect x="146" y="104" width="6" height="40" rx="2" fill="${eq}"/><rect x="180" y="40" width="8" height="111" rx="2" fill="${eq}"/>`;
   if (S === 'floor' || S === 'cableFly') scene = floor + (S === 'cableFly' ? `<rect x="2" y="-16" width="7" height="167" fill="${eq}"/><rect x="191" y="-16" width="7" height="167" fill="${eq}"/>` : '');
   if (S === 'legpress') scene = `${floor}<line x1="96" y1="126" x2="40" y2="84" stroke="${eq}" stroke-width="7" stroke-linecap="round"/><line x1="56" y1="126" x2="110" y2="126" stroke="${eq}" stroke-width="7" stroke-linecap="round"/>`;
+  if (S === 'hyper') scene = `${floor}<line x1="48" y1="150" x2="112" y2="92" stroke="${eq}" stroke-width="6" stroke-linecap="round"/><rect x="104" y="92" width="14" height="8" rx="3" fill="${eq}"/>`;
   if (S === 'bar') scene = `<line x1="40" y1="10" x2="160" y2="10" stroke="${eq}" stroke-width="5" stroke-linecap="round"/>`;
   const anchor = { cableHigh: [170, -14], cableTop: [100, -16], cableMid: [170, 40], cableLow: [170, 148], cableLowFront: [170, 148], rowCable: [184, 96] }[S];
-  const hiArm = P.hi === 'arm', hiLeg = P.hi === 'leg';
+  const hiArm = P.hi === 'arm', hiLeg = P.hi === 'leg', hiCore = P.hi === 'core';
   if (P.v === 'side') {
     const hip = pair('hip'), sh = pair('sh'), head = pair('head'), el = pair('el'), ha = pair('ha'), kn = pair('kn'), ft = pair('ft');
     if (anchor) fig += ln([anchor, anchor], ha, 1.6, 'var(--fg3)');
     fig += ln(hip, kn, 9, far, 'opacity=".55" transform="translate(-4 0)"') + ln(kn, ft, 8, far, 'opacity=".55" transform="translate(-4 0)"');
     fig += ln(sh, el, 8, far, 'opacity=".55" transform="translate(-4 0)"') + ln(el, ha, 7, far, 'opacity=".55" transform="translate(-4 0)"');
-    fig += ln(hip, sh, 15, body) + circ(head, 9, body);
+    fig += ln(hip, sh, 15, hiCore ? hi : body) + circ(head, 9, body);
     fig += ln(hip, kn, 10, hiLeg ? hi : body) + ln(kn, ft, 9, hiLeg ? hi : body);
     fig += ln(sh, el, 9, hiArm ? hi : body) + ln(el, ha, 8, hiArm ? hi : body);
     if (P.prop === 'bar') fig += circ(ha, 11, 'none', `stroke="${eq}" stroke-width="5"`);
@@ -2028,11 +2063,15 @@ function exArt(exOrId, size = 140, o = {}) {
   } else {
     const L = k => pair(k), sh = P.sp.sh, hp = P.sp.hip;
     if (S === 'cableFly') { fig += ln([[8, -10], [8, -10]], L('aL'), 1.6, 'var(--fg3)') + ln([[192, -10], [192, -10]], L('aR'), 1.6, 'var(--fg3)'); }
+    if (P.s.lean != null) fig += ln(L('pelvis'), L('neck'), 30, hiCore ? hi : body) + ln(L('sh').map(x => x[0]), L('sh').map(x => x[1]), 9, hiCore ? hi : body) + circ(L('head'), 10, body);
+    else {
     fig += `<path d="M${sh[0][0] - 3} ${sh[0][1] - 3} L${sh[1][0] + 3} ${sh[1][1] - 3} L${hp[1][0] + 2} ${hp[1][1]} L${hp[0][0] - 2} ${hp[0][1]} Z" fill="${body}" stroke="${body}" stroke-width="8" stroke-linejoin="round"/>`;
-    fig += `<circle cx="100" cy="20" r="10" fill="${body}"/>`;
+    fig += `<circle cx="100" cy="20" r="10" fill="${body}"/>`; }
     fig += `<line x1="${hp[0][0]}" y1="${hp[0][1]}" x2="88" y2="116" stroke="${body}" stroke-width="10" stroke-linecap="round"/><line x1="88" y1="116" x2="86" y2="150" stroke="${body}" stroke-width="9" stroke-linecap="round"/><line x1="${hp[1][0]}" y1="${hp[1][1]}" x2="112" y2="116" stroke="${body}" stroke-width="10" stroke-linecap="round"/><line x1="112" y1="116" x2="114" y2="150" stroke="${body}" stroke-width="9" stroke-linecap="round"/>`;
-    const shL = [sh[0], sh[0]], shR = [sh[1], sh[1]];
-    fig += ln(shL, L('eL'), 9, hi) + ln(L('eL'), L('aL'), 8, hi) + ln(shR, L('eR'), 9, hi) + ln(L('eR'), L('aR'), 8, hi);
+    const shL = P.s.lean != null ? L('sh').map(x => x[0]) : [sh[0], sh[0]], shR = P.s.lean != null ? L('sh').map(x => x[1]) : [sh[1], sh[1]];
+    const ac = hiCore ? body : hi;
+    fig += ln(shL, L('eL'), 9, ac) + ln(L('eL'), L('aL'), 8, ac) + ln(shR, L('eR'), 9, ac) + ln(L('eR'), L('aR'), 8, ac);
+    if (P.prop === 'db1') fig += circ(L('aR'), 6.5, eq);
     if (P.prop === 'db') fig += circ(L('aL'), 6.5, eq) + circ(L('aR'), 6.5, eq);
     if (P.prop === 'handle') fig += circ(L('aL'), 4.5, 'var(--fg2)') + circ(L('aR'), 4.5, 'var(--fg2)');
   }
@@ -2048,6 +2087,7 @@ const MUSCLE_REGIONS = {
     Biceps: '<ellipse cx="25" cy="54" rx="4" ry="8"/><ellipse cx="75" cy="54" rx="4" ry="8"/>',
     Forearms: '<ellipse cx="22" cy="72" rx="3.5" ry="9"/><ellipse cx="78" cy="72" rx="3.5" ry="9"/>',
     Core: '<rect x="42" y="52" width="16" height="26" rx="5"/>',
+    Obliques: '<rect x="35" y="56" width="6" height="20" rx="3"/><rect x="59" y="56" width="6" height="20" rx="3"/>',
     Quads: '<ellipse cx="42" cy="104" rx="7" ry="15"/><ellipse cx="58" cy="104" rx="7" ry="15"/>',
   },
   back: {
@@ -2057,6 +2097,7 @@ const MUSCLE_REGIONS = {
     Lats: '<path d="M34 46 L44 50 L46 70 L38 66 Z"/><path d="M66 46 L56 50 L54 70 L62 66 Z"/>',
     Triceps: '<ellipse cx="25" cy="54" rx="4" ry="8"/><ellipse cx="75" cy="54" rx="4" ry="8"/>',
     Forearms: '<ellipse cx="22" cy="72" rx="3.5" ry="9"/><ellipse cx="78" cy="72" rx="3.5" ry="9"/>',
+    'Lower back': '<rect x="43" y="62" width="14" height="16" rx="4"/>',
     Glutes: '<ellipse cx="43" cy="86" rx="8" ry="7"/><ellipse cx="57" cy="86" rx="8" ry="7"/>',
     Hamstrings: '<ellipse cx="42" cy="108" rx="6.5" ry="13"/><ellipse cx="58" cy="108" rx="6.5" ry="13"/>',
   },
@@ -4212,6 +4253,12 @@ function normalize() {
     const seed = STEAK_DAY.find(m => m.id === 'sd_b'), cur = S.meals.find(m => m.id === 'sd_b');
     if (cur) { cur.n = seed.n; cur.prep = seed.prep; cur.items = seed.items.map(i => ({ f: i[0], a: i[1], u: i[2] })); }
     setTimeout(() => Store.save('meals', 'foods', 'profile'), 450);
+  }
+  if (S.profile.onboarded && pv0 < 11) {
+    S.profile.pv = 11;
+    const add = { pushA: 'cable_crunch', pullA: 'back_ext', pushB: 'pallof', pullB: 'db_side_bend' };
+    for (const [tid, x] of Object.entries(add)) { const t = S.program.templates.find(t => t.id === tid), st = SEED_TEMPLATES.find(t => t.id === tid).ex.find(e => e.x === x); if (t && !t.ex.some(e => e.x === x)) t.ex.push(deep(st)); }
+    setTimeout(() => { Store.save('program', 'exercises', 'profile'); toast('Core work added: one core exercise at the end of each workout, 3 sets each per week.', { ms: 9000 }); }, 500);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
