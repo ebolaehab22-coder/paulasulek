@@ -1347,7 +1347,7 @@ const fmtAmt = a => { const r = round(a, 1); return Number.isInteger(r) ? String
 function roundItem(it) {
   const f = F(it.f); if (!f) return it;
   if (it.u === 'g' || it.u === 'ml') return { ...it, a: Math.max(5, Math.round(it.a / 5) * 5) };
-  return { ...it, a: Math.max(0.5, Math.round(it.a * 2) / 2) };
+  return { ...it, a: Math.max(0.25, Math.round(it.a * 4) / 4) };
 }
 function scaleItems(items, s) {
   return items.map(it => {
