@@ -4268,8 +4268,8 @@ function normalize() {
   }
   if (S.profile.onboarded && pv0 < 11) {
     S.profile.pv = 11;
-    const add = { pushA: 'cable_crunch', pullA: 'back_ext', pushB: 'pallof', pullB: 'db_side_bend' };
-    for (const [tid, x] of Object.entries(add)) { const t = S.program.templates.find(t => t.id === tid), st = SEED_TEMPLATES.find(t => t.id === tid).ex.find(e => e.x === x); if (t && !t.ex.some(e => e.x === x)) t.ex.push(deep(st)); }
+    const add = { pushA: 'reverse_crunch', pullA: 'back_ext', pushB: 'pallof', pullB: 'db_side_bend' };
+    for (const [tid, x] of Object.entries(add)) { const t = S.program.templates.find(t => t.id === tid), st = SEED_TEMPLATES.find(t => t.id === tid).ex.find(e => e.x === x); if (t && st && !t.ex.some(e => e.x === x || (x === 'reverse_crunch' && e.x === 'cable_crunch'))) t.ex.push(deep(st)); }
     setTimeout(() => { Store.save('program', 'exercises', 'profile'); toast('Core work added: one core exercise at the end of each workout, 3 sets each per week.', { ms: 9000 }); }, 500);
   }
   if (S.profile.onboarded && pv0 < 12) {
