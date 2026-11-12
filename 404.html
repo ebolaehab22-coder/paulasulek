@@ -986,6 +986,12 @@ const SEED_EXERCISES = [
     breath:'Breathe out hard as you crunch, in on the way up.',
     mistakes:['Sitting the hips back so it becomes a hip hinge','Pulling with the arms','Going so heavy the reps get short'],
     safety:'Pick a weight you control for full reps. Your hips should not move.', rec:'3 sets × 10–15', alt:['reverse_crunch','pallof'], q:'kneeling cable crunch form' },
+  { id:'wide_row', n:'Wide-Grip Seated Row (elbows out)', pm:['Upper back'], sm:['Rear delts','Lats','Biceps'], eq:'Cable', type:'Compound', diff:'Beginner',
+    setup:'Long straight bar (or lat-pulldown bar) on the low cable. Sit tall, grip wider than shoulders, chest up.',
+    steps:['Row the bar to your upper stomach / lower chest with the elbows flared out about 45–70° from your sides.','Squeeze your shoulder blades together and hold for 1 second.','Let your arms go long and your shoulder blades spread forward, without rounding your lower back.'],
+    breath:'Breathe out as you row.',
+    mistakes:['Leaning back to move the weight','Shrugging the shoulders up to the ears','Cutting the stretch short'],
+    safety:'Torso stays still; the movement is the arms and shoulder blades only.', rec:'2 sets × 10–12', alt:['seated_row','face_pull'], q:'wide grip seated cable row upper back' },
   { id:'reverse_crunch', n:'Reverse Crunch', pm:['Core'], sm:['Obliques'], eq:'Bodyweight', type:'Isolation', diff:'Beginner',
     setup:'Lie on your back on a mat or flat bench, knees bent 90°, hands flat beside your hips (or holding the bench behind your head).',
     steps:['Pull your knees toward your chest, then curl your hips up off the floor a few centimetres.','Squeeze the abs for a second at the top.','Lower slowly until your feet almost touch the floor, without arching your lower back.'],
@@ -1014,8 +1020,8 @@ const SEED_EXERCISES = [
 
 const SEED_TEMPLATES = [
   { id:'pushA', n:'Push A', ex:[['bench',2,6,10],['incline_db',2,8,12],['machine_shoulder',2,8,12],['lateral_raise',2,12,20],['tri_pushdown',2,10,15],['leg_ext',2,12,15],['reverse_crunch',3,10,15]] },
-  { id:'pullA', n:'Pull A', ex:[['lat_pulldown',2,8,12],['seated_row',2,8,12],['rear_delt_fly',2,12,20],['ez_curl',2,8,12],['hammer_curl',2,10,15],['back_ext',3,10,15]] },
-  { id:'pushB', n:'Push B', ex:[['incline_machine',2,8,12],['chest_press',2,8,12],['cable_fly',2,12,15],['lateral_raise',3,12,20],['oh_tri_ext',2,10,15],['leg_curl',2,10,15],['pallof',3,10,12]] },
+  { id:'pullA', n:'Pull A', ex:[['lat_pulldown',2,8,12],['seated_row',2,8,12],['wide_row',2,10,12],['rear_delt_fly',2,12,20],['ez_curl',2,8,12],['hammer_curl',2,10,15],['back_ext',3,10,15]] },
+  { id:'pushB', n:'Push B', ex:[['incline_machine',2,8,12],['chest_press',2,8,12],['cable_fly',2,12,15],['lateral_raise',3,12,20],['face_pull',2,12,15],['oh_tri_ext',2,10,15],['leg_curl',2,10,15],['pallof',3,10,12]] },
   { id:'pullB', n:'Pull B', ex:[['ng_pulldown',2,8,12],['one_arm_row',2,10,12],['straight_arm',2,12,15],['reverse_pec',2,12,20],['preacher',2,10,15],['cable_curl',2,10,15],['db_side_bend',3,12,15]] },
 ].map(t => ({ id:t.id, n:t.n, ex:t.ex.map(e => ({ x:e[0], sets:e[1], lo:e[2], hi:e[3] })) }));
 
@@ -1045,7 +1051,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:12, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:13, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -2018,7 +2024,7 @@ const PATTERNS = {
 };
 const EX_PATTERN = { bench: 'bench', db_bench: 'bench', incline_db: 'incline', incline_machine: 'incline', machine_shoulder: 'ohpress', db_shoulder: 'ohpress', chest_press: 'chestpress', push_up: 'pushup',
   lateral_raise: 'raise', cable_lateral: 'raise', tri_pushdown: 'pushdown', oh_tri_ext: 'ohext', skullcrusher: 'skull', leg_ext: 'legext', leg_curl: 'legcurl',
-  lat_pulldown: 'pulldown', ng_pulldown: 'pulldown', seated_row: 'row', one_arm_row: 'row', db_row: 'dbrow', straight_arm: 'straightarm', face_pull: 'facepull',
+  lat_pulldown: 'pulldown', ng_pulldown: 'pulldown', seated_row: 'row', wide_row: 'row', one_arm_row: 'row', db_row: 'dbrow', straight_arm: 'straightarm', face_pull: 'facepull',
   rear_delt_fly: 'reverse', reverse_pec: 'reverse', cable_fly: 'fly', pec_deck: 'pecdeck', ez_curl: 'curl', hammer_curl: 'curl', cable_curl: 'cablecurl', preacher: 'preacher', incline_db_curl: 'inclinecurl',
   cable_crunch: 'cablecrunch', reverse_crunch: 'revcrunch', back_ext: 'backext', db_side_bend: 'sidebend', pallof: 'pallof', goblet_squat: 'squat', leg_press: 'legpress', rdl: 'rdl', pull_up: 'pullup', assisted_pullup: 'pullup' };
 function patternFor(ex) {
@@ -4277,6 +4283,12 @@ function normalize() {
     const t = S.program.templates.find(t => t.id === 'pushA'), e = t?.ex.find(e => e.x === 'cable_crunch'); if (e) { e.x = 'reverse_crunch'; e.sets = 3; e.lo = 10; e.hi = 15; }
     const ae = S.active?.ex?.find(e => e.x === 'cable_crunch' && !e.sets.some(s => s.done)); if (ae) { ae.x = 'reverse_crunch'; ae.lo = 10; ae.hi = 15; ae.sets.forEach(s => s.w = ''); }
     setTimeout(() => { Store.save('program', 'exercises', 'profile', 'active'); toast('Cable crunch replaced with reverse crunch in Push A.', { ms: 8000 }); }, 550);
+  }
+  if (S.profile.onboarded && pv0 < 13) {
+    S.profile.pv = 13;
+    const ins = (tid, x, after, row) => { const t = S.program.templates.find(t => t.id === tid); if (!t || t.ex.some(e => e.x === x)) return; const st = SEED_TEMPLATES.find(t => t.id === tid)?.ex.find(e => e.x === x); if (!st) return; const k = t.ex.findIndex(e => e.x === after); t.ex.splice(k >= 0 ? k + 1 : t.ex.length, 0, deep(st)); };
+    ins('pullA', 'wide_row', 'seated_row'); ins('pushB', 'face_pull', 'lateral_raise');
+    setTimeout(() => { Store.save('program', 'exercises', 'profile'); toast('Upper back added: wide-grip row in Pull A, face pulls in Push B.', { ms: 8000 }); }, 600);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
