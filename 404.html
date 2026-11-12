@@ -1021,7 +1021,7 @@ const SEED_EXERCISES = [
 const SEED_TEMPLATES = [
   { id:'pushA', n:'Push A', ex:[['bench',2,6,10],['incline_db',2,8,12],['machine_shoulder',2,8,12],['lateral_raise',2,12,20],['tri_pushdown',2,10,15],['leg_ext',2,12,15],['reverse_crunch',3,10,15]] },
   { id:'pullA', n:'Pull A', ex:[['lat_pulldown',2,8,12],['seated_row',2,8,12],['wide_row',2,10,12],['rear_delt_fly',2,12,20],['ez_curl',2,8,12],['hammer_curl',2,10,15],['back_ext',3,10,15]] },
-  { id:'pushB', n:'Push B', ex:[['incline_machine',2,8,12],['chest_press',2,8,12],['cable_fly',2,12,15],['lateral_raise',3,12,20],['face_pull',2,12,15],['oh_tri_ext',2,10,15],['leg_curl',2,10,15],['pallof',3,10,12]] },
+  { id:'pushB', n:'Push B', ex:[['incline_machine',2,8,12],['chest_press',2,8,12],['cable_fly',2,12,15],['lateral_raise',3,12,20],['oh_tri_ext',2,10,15],['leg_curl',2,10,15],['pallof',3,10,12]] },
   { id:'pullB', n:'Pull B', ex:[['ng_pulldown',2,8,12],['one_arm_row',2,10,12],['straight_arm',2,12,15],['reverse_pec',2,12,20],['preacher',2,10,15],['cable_curl',2,10,15],['db_side_bend',3,12,15]] },
 ].map(t => ({ id:t.id, n:t.n, ex:t.ex.map(e => ({ x:e[0], sets:e[1], lo:e[2], hi:e[3] })) }));
 
@@ -1051,7 +1051,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:13, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:14, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1151,7 +1151,7 @@ function seedState() {
   S.foods = deep(SEED_FOODS);
   S.meals = SEED_MEALS.map(m => ({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) }));
   S.exercises = deep(SEED_EXERCISES);
-  S.program = { templates: deep(SEED_TEMPLATES), schedule: deep(SEED_SCHEDULE), overrides: {} };
+  S.program = { templates: deep(SEED_TEMPLATES), schedule: deep(SEED_SCHEDULE), overrides: {}, mode: 'cycle', cycle: [...DEFAULT_CYCLE] };
   S.reminders = deep(SEED_REMINDERS);
   S.measurements = deep(SEED_MEASUREMENTS); S.days = {}; S.workouts = []; S.active = null;
   S.plan = paulaWeek();
@@ -1565,8 +1565,28 @@ function buildFromAvailable(ids, tk, tp, opts) {
 }
 
 // ---------- training ----------
+const DEFAULT_CYCLE = ['pushA', 'pullA', 'pushB', 'pullB', 'rest'];
+// rotation: the next session follows the last one you actually did, whatever the weekday
+function rotationFor(k) {
+  const cyc = (S.program.cycle || DEFAULT_CYCLE).filter(x => x === 'rest' || TPL(x)); if (!cyc.length) return { type: 'rest' };
+  const dw = workoutsOn(k)[0]; if (dw) return { type: 'workout', t: dw.tpl, rot: true };
+  const t0 = today(); if (k < t0) return { type: 'rest', note: 'No session logged', rot: true };
+  const done = doneWorkouts().filter(w => cyc.includes(w.tpl)).sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : (a.start || 0) - (b.start || 0));
+  const todayDone = done.filter(w => w.date === t0).pop(), prev = done.filter(w => w.date < t0).pop();
+  let idx, from;
+  if (todayDone) { idx = (cyc.indexOf(todayDone.tpl) + 1) % cyc.length; from = addD(t0, 1); }
+  else {
+    idx = prev ? (cyc.indexOf(prev.tpl) + 1) % cyc.length : 0; from = t0;
+    // the rest day after Pull B is already used up if the last session wasn't yesterday
+    while (cyc[idx] === 'rest' && prev && prev.date < addD(t0, -1) && cyc.some(x => x !== 'rest')) idx = (idx + 1) % cyc.length;
+  }
+  let steps = 0; for (let d = from; d < k; d = addD(d, 1)) steps++;
+  const item = cyc[(idx + steps) % cyc.length];
+  return item === 'rest' ? { type: 'rest', note: 'Rest day in your cycle', rot: true } : { type: 'workout', t: item, rot: true };
+}
 function scheduleFor(k) {
   const ov = S.program.overrides?.[k]; if (ov) return { ...ov, override: true };
+  if (S.program.mode === 'cycle') return rotationFor(k);
   return S.program.schedule[wdOf(k)] || { type: 'rest' };
 }
 const doneWorkouts = () => S.workouts.filter(w => w.status === 'done');
@@ -2587,11 +2607,15 @@ function vTrainWeek() {
   ${missed.length ? `<section class="card"><div class="card-h"><div><div class="eyebrow">Missed this week</div><h2>${missed.length} session${missed.length > 1 ? 's' : ''} not done</h2></div></div>
     <p class="small muted" style="margin:0 0 10px">No need to cram it into tomorrow. Pick what fits: do it on a free day, or let it go and continue the plan.</p>
     <div class="list">${missed.map(d => { const s = scheduleFor(d); return `<div class="li"><span class="grow"><b>${esc(TPL(s.t)?.n)}</b> <span class="dim small">${fmtDate(d, { wd: 1 })}</span></span><button class="btn sm" data-a="moveSession" data-k="${d}">Move to a day</button><button class="btn sm ghost" data-a="skipSession" data-k="${d}">Let it go</button></div>`; }).join('')}</div></section>` : ''}
-  <section class="card"><div class="card-h"><div><div class="eyebrow">Default weekly schedule</div><h2>Training days</h2></div><span class="tiny dim">Applies to every week. One-off changes go on the day itself.</span></div>
+  <section class="card"><div class="card-h"><div><div class="eyebrow">How you train</div><h2>${S.program.mode === 'cycle' ? 'Rotation' : 'Fixed weekdays'}</h2></div><div class="seg"><button class="${S.program.mode === 'cycle' ? 'on' : ''}" data-a="progMode" data-v="cycle">Rotation</button><button class="${S.program.mode !== 'cycle' ? 'on' : ''}" data-a="progMode" data-v="week">Fixed weekdays</button></div></div>
+  ${S.program.mode === 'cycle' ? `<p class="small muted" style="margin:0 0 10px">The next session always follows the last one you did, on any day of the week. Miss a day and nothing is skipped: the plan just waits for you.</p>
+    <div class="row" style="flex-wrap:wrap;gap:6px">${(S.program.cycle || DEFAULT_CYCLE).map((x, i, a) => `<span class="chip ${x === 'rest' ? '' : 'on'}">${x === 'rest' ? 'Rest' : esc(TPL(x)?.n || x)}</span>${i < a.length - 1 ? '<span class="dim">→</span>' : '<span class="dim">↻</span>'}`).join('')}</div>
+    <div class="list" style="margin-top:12px">${[0, 1, 2, 3, 4].map(i => { const d = addD(today(), i), s = scheduleFor(d); return `<div class="li"><b style="width:110px">${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : fmtDate(d, { wd: 1 })}</b><span class="grow">${s.type === 'workout' ? esc(TPL(s.t)?.n) + (workoutsOn(d).length ? ' ✓' : '') : 'Rest'}</span></div>`; }).join('')}</div></section>` : '</section>'}
+  ${S.program.mode === 'cycle' ? '' : `<section class="card"><div class="card-h"><div><div class="eyebrow">Default weekly schedule</div><h2>Training days</h2></div><span class="tiny dim">Applies to every week. One-off changes go on the day itself.</span></div>
   <div class="list">${[6, 0, 1, 2, 3, 4, 5].map(wd => { const s = sched[wd] || { type: 'rest' }; return `<div class="li" style="flex-wrap:wrap"><b style="width:96px">${WD[wd]}</b>
     <select class="input" style="width:150px" id="sch-type-${wd}" data-c="schedType" data-wd="${wd}" aria-label="${WD[wd]} type">${opt('workout', 'Workout', s.type)}${opt('rest', 'Rest', s.type)}${opt('activity', 'Activity / sport', s.type)}</select>
     ${s.type === 'workout' ? `<select class="input" style="width:160px" id="sch-t-${wd}" data-c="schedTpl" data-wd="${wd}" aria-label="${WD[wd]} workout">${S.program.templates.map(t => opt(t.id, t.n, s.t)).join('')}</select><label class="row small" style="gap:6px"><input type="checkbox" id="sch-o-${wd}" data-c="schedOpt" data-wd="${wd}" ${s.opt ? 'checked' : ''}>Optional</label>`
-      : `<input class="input grow" style="min-width:160px" id="sch-n-${wd}" data-c="schedNote" data-wd="${wd}" value="${esc(s.note || '')}" placeholder="Note (e.g. football, walking)">`}</div>`; }).join('')}</div></section>`;
+      : `<input class="input grow" style="min-width:160px" id="sch-n-${wd}" data-c="schedNote" data-wd="${wd}" value="${esc(s.note || '')}" placeholder="Note (e.g. football, walking)">`}</div>`; }).join('')}</div></section>`}`;
 }
 function vProgram() {
   return `<div class="row between"><p class="muted small" style="margin:0;max-width:620px">Editable starting template, not a prescription. Low volume, high effort: take most working sets to 0–2 reps in reserve once you're back in rhythm.</p><button class="btn" data-a="newTemplate">${ic('plus')}New template</button></div>
@@ -3894,6 +3918,7 @@ const C = {
   },
   meAdd(el) { if (!el.value) return; const f = F(el.value); window._ie.me.push({ f: f.id, a: f.b === 'u' ? 1 : 100, u: f.b === 'u' ? 'u' : f.b === 'ml' ? 'ml' : 'g' }); el.value = ''; refreshItemsEditor('me'); },
   restQty(el) { const f = F(el.dataset.id), q = +el.value || 1; $('#rk').value = round(f.k * q); $('#rp').value = round(f.p * q); $('#rc').value = round(f.c * q); $('#rf').value = round(f.f * q); },
+  progMode(el) { S.program.mode = el.dataset.v; if (!S.program.cycle) S.program.cycle = [...DEFAULT_CYCLE]; Store.save('program'); render(); },
   schedType(el) { const s = S.program.schedule[el.dataset.wd] = S.program.schedule[el.dataset.wd] || {}; s.type = el.value; if (s.type === 'workout' && !s.t) s.t = S.program.templates[0]?.id; Store.save('program'); render(); },
   schedTpl(el) { S.program.schedule[el.dataset.wd].t = el.value; Store.save('program'); render(); },
   schedOpt(el) { S.program.schedule[el.dataset.wd].opt = el.checked; Store.save('program'); render(); },
@@ -4241,7 +4266,7 @@ function normalize() {
   if (!Array.isArray(S.meals) || !S.meals.length) S.meals = SEED_MEALS.map(m => ({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) }));
   if (!Array.isArray(S.exercises) || !S.exercises.length) S.exercises = deep(SEED_EXERCISES);
   for (const e of SEED_EXERCISES) if (!S.exercises.find(x => x.id === e.id)) S.exercises.push(deep(e));
-  if (!S.program?.templates) S.program = { templates: deep(SEED_TEMPLATES), schedule: deep(SEED_SCHEDULE), overrides: {} };
+  if (!S.program?.templates) S.program = { templates: deep(SEED_TEMPLATES), schedule: deep(SEED_SCHEDULE), overrides: {}, mode: 'cycle', cycle: [...DEFAULT_CYCLE] };
   S.program.overrides = S.program.overrides || {};
   if (!Array.isArray(S.reminders)) S.reminders = deep(SEED_REMINDERS);
   if (!Array.isArray(S.measurements)) S.measurements = [];
@@ -4287,8 +4312,14 @@ function normalize() {
   if (S.profile.onboarded && pv0 < 13) {
     S.profile.pv = 13;
     const ins = (tid, x, after, row) => { const t = S.program.templates.find(t => t.id === tid); if (!t || t.ex.some(e => e.x === x)) return; const st = SEED_TEMPLATES.find(t => t.id === tid)?.ex.find(e => e.x === x); if (!st) return; const k = t.ex.findIndex(e => e.x === after); t.ex.splice(k >= 0 ? k + 1 : t.ex.length, 0, deep(st)); };
-    ins('pullA', 'wide_row', 'seated_row'); ins('pushB', 'face_pull', 'lateral_raise');
-    setTimeout(() => { Store.save('program', 'exercises', 'profile'); toast('Upper back added: wide-grip row in Pull A, face pulls in Push B.', { ms: 8000 }); }, 600);
+    ins('pullA', 'wide_row', 'seated_row');
+    setTimeout(() => { Store.save('program', 'exercises', 'profile'); 0; }, 600);
+  }
+  if (S.profile.onboarded && pv0 < 14) {
+    S.profile.pv = 14;
+    const pb = S.program.templates.find(t => t.id === 'pushB'); if (pb) pb.ex = pb.ex.filter(e => e.x !== 'face_pull');
+    S.program.mode = 'cycle'; S.program.cycle = [...DEFAULT_CYCLE];
+    setTimeout(() => { Store.save('program', 'profile'); toast('Training now follows your cycle: Push A → Pull A → Push B → Pull B → Rest, then repeat.', { ms: 9000 }); }, 650);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }

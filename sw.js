@@ -1,5 +1,5 @@
-// PaulaSulek offline cache · version 82f50df525
-const CACHE = 'paulasulek-82f50df525';
+// PaulaSulek offline cache · version 1913bdc1fa
+const CACHE = 'paulasulek-1913bdc1fa';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
