@@ -1051,7 +1051,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:14, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:15, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -4336,6 +4336,13 @@ function normalize() {
     const pb = S.program.templates.find(t => t.id === 'pushB'); if (pb) pb.ex = pb.ex.filter(e => e.x !== 'face_pull');
     S.program.mode = 'cycle'; S.program.cycle = [...DEFAULT_CYCLE];
     setTimeout(() => { Store.save('program', 'profile'); toast('Training now follows your cycle: Push A → Pull A → Push B → Pull B → Rest, then repeat.', { ms: 9000 }); }, 650);
+  }
+  if (S.profile.onboarded && pv0 < 15) {
+    // Nov 13 2026: lock the training plan to exactly what Paula approved (rest times, cycle, all 4 workouts)
+    S.profile.pv = 15;
+    S.program.templates = deep(SEED_TEMPLATES); S.program.mode = 'cycle'; S.program.cycle = [...DEFAULT_CYCLE];
+    S.profile.restCompound = 150; S.profile.restIsolation = 90;
+    setTimeout(() => { Store.save('program', 'profile'); toast('Training plan set: Push A → Pull A → Push B → Pull B → Rest.', { ms: 8000 }); }, 700);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
