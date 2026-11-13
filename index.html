@@ -1577,8 +1577,10 @@ function rotationFor(k) {
   if (todayDone) { idx = (cyc.indexOf(todayDone.tpl) + 1) % cyc.length; from = addD(t0, 1); }
   else {
     idx = prev ? (cyc.indexOf(prev.tpl) + 1) % cyc.length : 0; from = t0;
+    const pin = S.program.cyclePin; // "my next workout is …", set by hand
+    if (pin && cyc.includes(pin.t) && pin.k <= t0 && (!prev || prev.date < pin.k)) { idx = cyc.indexOf(pin.t); }
     // the rest day after Pull B is already used up if the last session wasn't yesterday
-    while (cyc[idx] === 'rest' && prev && prev.date < addD(t0, -1) && cyc.some(x => x !== 'rest')) idx = (idx + 1) % cyc.length;
+    while (!(pin && cyc.includes(pin.t) && pin.k <= t0 && (!prev || prev.date < pin.k)) && cyc[idx] === 'rest' && prev && prev.date < addD(t0, -1) && cyc.some(x => x !== 'rest')) idx = (idx + 1) % cyc.length;
   }
   let steps = 0; for (let d = from; d < k; d = addD(d, 1)) steps++;
   const item = cyc[(idx + steps) % cyc.length];
@@ -2610,6 +2612,7 @@ function vTrainWeek() {
   <section class="card"><div class="card-h"><div><div class="eyebrow">How you train</div><h2>${S.program.mode === 'cycle' ? 'Rotation' : 'Fixed weekdays'}</h2></div><div class="seg"><button class="${S.program.mode === 'cycle' ? 'on' : ''}" data-a="progMode" data-v="cycle">Rotation</button><button class="${S.program.mode !== 'cycle' ? 'on' : ''}" data-a="progMode" data-v="week">Fixed weekdays</button></div></div>
   ${S.program.mode === 'cycle' ? `<p class="small muted" style="margin:0 0 10px">The next session always follows the last one you did, on any day of the week. Miss a day and nothing is skipped: the plan just waits for you.</p>
     <div class="row" style="flex-wrap:wrap;gap:6px">${(S.program.cycle || DEFAULT_CYCLE).map((x, i, a) => `<span class="chip ${x === 'rest' ? '' : 'on'}">${x === 'rest' ? 'Rest' : esc(TPL(x)?.n || x)}</span>${i < a.length - 1 ? '<span class="dim">→</span>' : '<span class="dim">↻</span>'}`).join('')}</div>
+    <label class="row small" style="margin-top:12px;gap:8px"><span>Today's workout is</span><select class="input" style="width:150px" id="cyc-pin" data-c="cyclePin">${(S.program.cycle || DEFAULT_CYCLE).map(x => opt(x, x === 'rest' ? 'Rest' : TPL(x)?.n || x, (() => { const s = scheduleFor(today()); return s.type === 'workout' ? s.t : 'rest'; })())).join('')}</select></label>
     <div class="list" style="margin-top:12px">${[0, 1, 2, 3, 4].map(i => { const d = addD(today(), i), s = scheduleFor(d); return `<div class="li"><b style="width:110px">${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : fmtDate(d, { wd: 1 })}</b><span class="grow">${s.type === 'workout' ? esc(TPL(s.t)?.n) + (workoutsOn(d).length ? ' ✓' : '') : 'Rest'}</span></div>`; }).join('')}</div></section>` : '</section>'}
   ${S.program.mode === 'cycle' ? '' : `<section class="card"><div class="card-h"><div><div class="eyebrow">Default weekly schedule</div><h2>Training days</h2></div><span class="tiny dim">Applies to every week. One-off changes go on the day itself.</span></div>
   <div class="list">${[6, 0, 1, 2, 3, 4, 5].map(wd => { const s = sched[wd] || { type: 'rest' }; return `<div class="li" style="flex-wrap:wrap"><b style="width:96px">${WD[wd]}</b>
@@ -3016,7 +3019,9 @@ function vOnboarding() {
   if (st === 1) body = `<h1>Daily targets</h1><p class="muted" style="margin:0">Pre-filled defaults from what you told me (labeled as defaults); change any of them. Starting points, not medical advice. Weekly reviews tell you when a change might help; PaulaSulek never changes them for you.</p>
     <div class="fgrid">${num('kcal', 'Calories', p.kcal, 10, 'kcal')}${num('protein', 'Protein', p.protein, 5, 'g')}${num('fat', 'Fat guide', p.fat, 5, 'g')}${num('carbs', 'Carbs guide', p.carbs, 5, 'g')}${num('waterMl', 'Water', p.waterMl, 250, 'ml')}${num('sleepTarget', 'Sleep goal', p.sleepTarget, 0.5, 'h')}</div>
     <div class="fgrid">${num('steps.start', 'Steps: starting goal', p.steps.start, 500)}${num('steps.inc', 'Add per week', p.steps.inc, 250)}${num('steps.max', 'Step goal cap', p.steps.max, 500)}</div>`;
-  if (st === 2) body = `<h1>Your training week</h1><p class="muted" style="margin:0">Push / Pull, 3 core sessions plus an optional fourth. Assign them to the days that suit your university and work schedule.</p>
+  if (st === 2 && S.program.mode === 'cycle') body = `<h1>Your training cycle</h1><p class="muted" style="margin:0">Push A → Pull A → Push B → Pull B → Rest, then repeat. The next workout always follows the last one you did, on any day. Every workout ends with one core exercise.</p>
+    <div class="list">${S.program.templates.map(t => `<div class="li" style="display:block"><b>${esc(t.n)}</b><div class="tiny dim">${t.ex.map(e => `${esc(EX(e.x).n)} ${e.sets}×${e.lo}–${e.hi}`).join(' · ')}</div></div>`).join('')}<div class="li"><b>Rest</b><span class="tiny dim">&nbsp;Walk for your steps; padel or football fits on any rest day.</span></div></div>`;
+  else if (st === 2) body = `<h1>Your training week</h1><p class="muted" style="margin:0">Push / Pull, 3 core sessions plus an optional fourth. Assign them to the days that suit your university and work schedule.</p>
     <div class="list">${[6, 0, 1, 2, 3, 4, 5].map(wd => { const s = S.program.schedule[wd]; return `<div class="li"><b style="width:100px">${WD[wd]}</b><select class="input" id="o-sch-${wd}" data-c="onbSched" data-wd="${wd}" aria-label="${WD[wd]}">${opt('rest', 'Rest', s.type === 'workout' ? '' : s.type)}${opt('activity', 'Football / activity', s.type === 'activity' ? 'activity' : '')}${S.program.templates.map(t => opt('w:' + t.id, t.n + (t.id === 'pullB' ? ' (optional)' : ''), s.type === 'workout' ? 'w:' + s.t : '')).join('')}</select></div>`; }).join('')}</div>`;
   if (st === 3) body = `<h1>Food preferences</h1><p class="muted" style="margin:0">PaulaSulek will never suggest foods you dislike. Eggs are marked less preferred, so they show up only when they help.</p>
     <div class="field"><span>Disliked</span><div class="chips">${p.dislikes.map(id => `<span class="chip no">${esc(F(id)?.n)}</span>`).join('')}${p.dislikeText.map(t => `<span class="chip no">${esc(t)}</span>`).join('')}</div></div>
@@ -3095,6 +3100,7 @@ function vToday() {
   const btnAttrs = x => `data-a="${x.a}"${x.slot ? ` data-slot="${x.slot}" data-k="${k}"` : ''}${x.t ? ` data-t="${x.t}"` : ''}${x.v != null ? ` data-v="${x.v}"` : ''}`;
   const muscles = tpl ? [...new Set(tpl.ex.flatMap(e => EX(e.x).pm))] : [];
   return `
+  ${(() => { if (window.claude) return ''; let last = 0; try { last = +(localStorage.getItem('ps-lastExport') || 0); } catch {} const days = last ? Math.floor((Date.now() - last) / 864e5) : null; if (days !== null && days < 2) return ''; return `<div class="banner warn"><span class="grow"><b>${days === null ? 'No backup yet.' : `Last backup ${days} days ago.`}</b> Your data is only on this phone. Save a copy to Google Drive so it can't be lost.</span><button class="btn sm pri" data-a="shareBackup">Save backup</button></div>`; })()}
   ${hasSample() ? `<div class="banner warn"><span class="grow"><b>Sample data is showing.</b> It isn't your real progress.</span><button class="btn sm" data-a="removeSample">Remove it</button></div>` : ''}
   <section class="band" aria-label="Today">
     <div class="band-top"><span class="band-date">${WD[wdOf(k)]} · ${fmtDate(k, { y: 1 })}</span><span class="band-chips"><span class="chip-b">Week ${ph.w} · ${ph.name}</span>${isFastingDay(k) ? '<span class="chip-b">Fasting day</span>' : ''}<button class="chip-b lvl" data-a="go" data-v="settings" title="Your level">Lv ${lvl.lv} · ${fmtN(dp.total)} pts today</button></span></div>
@@ -3850,6 +3856,15 @@ const A = {
     render();
   },
   exportJSON() { const data = {}; for (const b of Store.allBuckets()) data[b] = bucketValue(b); try { localStorage.setItem('ps-lastExport', Date.now()); } catch {} offerFile(`paulasulek-backup-${today()}.json`, JSON.stringify({ app: 'FORGE', version: 1, exported: new Date().toISOString(), data }, null, 1), 'application/json'); },
+  async shareBackup() {
+    const data = {}; for (const b of Store.allBuckets()) data[b] = bucketValue(b);
+    const name = `paulasulek-backup-${today()}.json`, text = JSON.stringify({ app: 'FORGE', version: 1, exported: new Date().toISOString(), data });
+    try {
+      const file = new File([text], name, { type: 'application/json' });
+      if (navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: 'PaulaSulek backup' }); try { localStorage.setItem('ps-lastExport', Date.now()); } catch {} toast('Backup shared. Keep it in Google Drive or WhatsApp.'); render(); return; }
+    } catch (e) { if (e?.name === 'AbortError') return; }
+    A.exportJSON(); render();
+  },
   exportCSV(el) {
     const v = el.dataset.v, q = x => `"${String(x ?? '').replace(/"/g, '""')}"`; let rows;
     if (v === 'weights') rows = [['date','weight_kg','waist_cm','chest_cm','arm_cm','hip_cm','bodyfat_est_pct','bf_method','notes','sample']].concat(S.measurements.slice().sort((a, b) => a.date < b.date ? -1 : 1).map(m => [m.date, m.kg, m.waist, m.chest, m.arm, m.hip, m.bf, m.bfMethod, m.notes, m.sample ? 'yes' : '']));
@@ -3918,6 +3933,7 @@ const C = {
   },
   meAdd(el) { if (!el.value) return; const f = F(el.value); window._ie.me.push({ f: f.id, a: f.b === 'u' ? 1 : 100, u: f.b === 'u' ? 'u' : f.b === 'ml' ? 'ml' : 'g' }); el.value = ''; refreshItemsEditor('me'); },
   restQty(el) { const f = F(el.dataset.id), q = +el.value || 1; $('#rk').value = round(f.k * q); $('#rp').value = round(f.p * q); $('#rc').value = round(f.c * q); $('#rf').value = round(f.f * q); },
+  cyclePin(el) { S.program.cyclePin = { k: today(), t: el.value }; Store.save('program'); render(); toast(`Next: ${el.value === 'rest' ? 'Rest' : TPL(el.value)?.n}. The cycle continues from there.`); },
   progMode(el) { S.program.mode = el.dataset.v; if (!S.program.cycle) S.program.cycle = [...DEFAULT_CYCLE]; Store.save('program'); render(); },
   schedType(el) { const s = S.program.schedule[el.dataset.wd] = S.program.schedule[el.dataset.wd] || {}; s.type = el.value; if (s.type === 'workout' && !s.t) s.t = S.program.templates[0]?.id; Store.save('program'); render(); },
   schedTpl(el) { S.program.schedule[el.dataset.wd].t = el.value; Store.save('program'); render(); },
@@ -4353,7 +4369,7 @@ async function init() {
   Coach.init();
   if (!window.claude && S.profile.onboarded) {
     const last = +(localStorage.getItem('ps-lastExport') || 0);
-    if (Date.now() - last > 7 * 864e5) setTimeout(() => toast('Save a backup file of your data (once a week keeps it safe).', { action: () => A.exportJSON(), label: 'Save backup', ms: 12000 }), 2500);
+    if (Date.now() - last > 864e5) setTimeout(() => toast('Your data lives only on this phone. Save today\'s backup to Google Drive.', { action: () => A.shareBackup(), label: 'Save backup', ms: 15000 }), 2500);
   }
   setInterval(tick, 500);
   setInterval(() => {
