@@ -1040,18 +1040,18 @@ const SEED_PROFILE = {
   name:'Paula', heightCm:175, age:null, goalWeight:null, equipment:['gym','barbell','dumbbell','cable'],
   historical:{ kg:94.15, note:'Last previously reported weight, after breakfast. Historical, undated: not today\'s weight.' },
   goal:'Body recomposition: lose fat while preserving and rebuilding muscle',
-  bfGoal:'12–15%', kcal:2100, protein:170, fat:65, carbs:210, waterMl:3500,
-  steps:{ start:5000, inc:1000, max:10000, from:null },
+  bfGoal:'12–15%', kcal:1900, protein:190, fat:55, carbs:160, waterMl:3500, fastTargets:{ kcal:1780, protein:98, fat:40, carbs:265 },
+  steps:{ start:6000, inc:1000, max:8000, from:null },
   slotShare:{ breakfast:0.2, lunch:0.32, snack:0.13, dinner:0.35 }, cheatPerMonth:1,
   activity:'Desk work, ~2,000 steps/day; padel or football 1×/week', experience:'Years of training, returning after an extended break',
   style:'Low volume, high effort, efficient sessions', sleepTarget:7,
   trackRIR:true, restCompound:150, restIsolation:90,
   dislikes:['oats','tuna','fish','cottage','foul','tofu','quinoa'], dislikeText:['soy','vegan burger'],
   lessPreferred:[], favorites:['chicken','beef','kofta','kebab','liver','roumy','turkey','greek','whey','baladi','rice'], favMeals:[], unavailable:[], allergies:[], restrictions:'',
-  budget:2, mealTimes:{ breakfast:'09:00', lunch:'15:00', snack:'18:00', dinner:'21:30' }, trainTime:'19:30',
+  budget:2, mealTimes:{ breakfast:'10:00', lunch:'15:00', snack:'19:30', dinner:'23:00' }, trainTime:'21:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:15, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:16, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1072,6 +1072,23 @@ const STEAK_DAY = [
   { id:'sd_s', n:'Whey & skim milk', slot:['snack'], items:[['whey',1,'scoop'],['milk_skim',250,'ml']], prep:'' },
   { id:'sd_d', n:'Steak wrap & big salad', slot:['dinner','lunch'], items:[['beef',180,'g'],['tortilla_my',1,'tortilla'],['salad',250,'g']], prep:'One tortilla, the rest of the plate is salad. Trim visible fat from the steak.' },
 ].map(m => ({ ...m, ctx:['home'], cook: m.id === 'sd_b' || m.id === 'sd_s' ? 0 : 1, min: 15, cost: 3, core: 1, plan: 1 }));
+// Nov 16 2026: Paula's from-scratch cut plan. 1,900 kcal / 190 P / 55 F / 160 C, every gram of oil counted, max 1 whey a day.
+const CUT_MEALS = [
+  { id:'cut_b', n:'Eggs, toast, white cheese & Greek yogurt', slot:['breakfast'], items:[['eggs',2,'large egg'],['toast',50,'g'],['white_full',20,'g'],['greek',170,'g'],['veg_oil',2,'g']], prep:'Cook the eggs with 2 g oil (one spray or a thin wipe of the pan). Yogurt on the side.' },
+  { id:'cut_l', n:'Grilled chicken, rice & salad', slot:['lunch','dinner'], items:[['chicken',200,'g'],['rice',150,'g'],['salad',200,'g'],['veg_oil',5,'g']], prep:'Weigh chicken after cooking and rice after cooking. 5 g oil = 1 teaspoon, for cooking or on the salad.' },
+  { id:'cut_s', n:'Whey & banana (before the gym)', slot:['snack'], items:[['whey',1,'scoop'],['banana',1,'medium']], prep:'Your one scoop of whey for the day.' },
+  { id:'cut_d_ch', n:'Chicken wrap, cheddar & big salad', slot:['dinner','lunch'], items:[['chicken',170,'g'],['tortilla_my',1,'tortilla'],['cheddar',15,'g'],['salad',200,'g'],['veg_oil',3,'g']], prep:'After the gym. Weigh chicken after cooking.' },
+  { id:'cut_d_st', n:'Steak wrap & big salad', slot:['dinner','lunch'], items:[['beef',160,'g'],['tortilla_my',1,'tortilla'],['salad',200,'g'],['veg_oil',3,'g']], prep:'Lean cut (round/sirloin), visible fat trimmed. Weigh after cooking. Max 3 times a week.' },
+  { id:'cut_d_lv', n:'Liver (kebda) wrap & big salad', slot:['dinner','lunch'], items:[['liver',170,'g'],['tortilla_my',1,'tortilla'],['cheddar',15,'g'],['salad',200,'g'],['veg_oil',3,'g']], prep:'Sauté with garlic, pepper and cumin using the 3 g oil.' },
+  { id:'cut_d_kf', n:'Kofta wrap & big salad', slot:['dinner','lunch'], items:[['mince',150,'g'],['tortilla_my',1,'tortilla'],['salad',200,'g'],['veg_oil',3,'g']], prep:'Lean mince, grilled or air-fried. Once a week (more fat).' },
+  { id:'cut_fb', n:'Baladi bread, peanut butter & fruit', slot:['breakfast'], items:[['baladi',100,'g'],['pb',20,'g'],['fruit',1,'u']], prep:'Fasting day.' },
+  { id:'cut_fl', n:'Lentils, salad & tahini', slot:['lunch'], items:[['lentils',250,'g'],['salad',300,'g'],['tahini',15,'g'],['veg_oil',5,'g']], prep:'Fasting day. Weigh lentils after cooking.' },
+  { id:'cut_fs', n:'Whey shake', slot:['snack'], items:[['whey',1,'scoop']], prep:'Fasting day: your one scoop, before the gym.' },
+  { id:'cut_fd', n:'Pasta with tomato sauce & chickpeas', slot:['dinner'], items:[['pasta',200,'g'],['tomato_sauce',150,'g'],['chickpeas',200,'g'],['veg_oil',5,'g']], prep:'Fasting day. Weigh pasta and chickpeas after cooking.' },
+].map(m => ({ ...m, ctx:['home'], cook: 1, min: 20, cost: 2, core: 1, plan: 1 }));
+const CUT_WEEK = { 0:['cut_b','cut_l','cut_s','cut_d_ch'], 1:['cut_b','cut_l','cut_s','cut_d_lv'], 2:['cut_b','cut_l','cut_s','cut_d_ch'], 3:['cut_fb','cut_fl','cut_fs','cut_fd'], 4:['cut_b','cut_l','cut_s','cut_d_kf'], 5:['cut_fb','cut_fl','cut_fs','cut_fd'], 6:['cut_b','cut_l','cut_s','cut_d_st'] };
+const CUT_FAST_WEEK = { 3:['cut_fb','cut_fl','cut_fs','cut_fd'], 5:['cut_fb','cut_fl','cut_fs','cut_fd'] };
+SEED_MEALS.push(...CUT_MEALS);
 // everyday versions of the steak day: swap the meat for chicken breast and/or the tortillas for pasta
 const DAY_VARIANTS = [
   { id:'sd_l_c', n:'Chicken shawarma wraps', slot:['lunch','dinner'], items:[['chicken',200,'g'],['tortilla_my',2,'tortilla'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Slice the chicken breast thin, sear with onion and peppers. Weigh the chicken after cooking.' },
@@ -1157,7 +1174,7 @@ function seedState() {
   S.plan = paulaWeek();
 }
 // Paula's own weekly plan, exact grams (scale 1)
-function paulaWeek() { const out = {}, fa = S.profile?.fasting; for (const [wd, ids0] of Object.entries(EVERYDAY_WEEK)) { const ids = fa?.enabled && fa.days.includes(+wd) && PAULA_FAST_WEEK[wd] ? PAULA_FAST_WEEK[wd] : ids0; out[wd] = {}; ['breakfast','lunch','snack','dinner'].forEach((s, i) => out[wd][s] = { m: ids[i], s: 1 }); } return out; }
+function paulaWeek() { const out = {}, fa = S.profile?.fasting; for (const [wd, ids0] of Object.entries(CUT_WEEK)) { const ids = fa?.enabled && fa.days.includes(+wd) ? (CUT_FAST_WEEK[wd] || CUT_FAST_WEEK[3]) : (+wd === 3 || +wd === 5 ? CUT_WEEK[0] : ids0); out[wd] = {}; ['breakfast','lunch','snack','dinner'].forEach((s, i) => out[wd][s] = { m: ids[i], s: 1 }); } return out; }
 
 const getDay = k => S.days[k] || (S.days[k] = { d: k, meals: [], water: 0, steps: null, sleep: null, energy: null, hunger: null, sore: null, rhr: null, rest: false, act: [], hab: {}, planEdits: {}, notes: '' });
 const peekDay = k => S.days[k] || null;
@@ -1358,6 +1375,7 @@ const fmtKg = w => fmtAmt(toDispW(+w || 0));
 const fmtAmt = a => { const r = round(a, 1); return Number.isInteger(r) ? String(r) : r.toFixed(1); };
 function roundItem(it) {
   const f = F(it.f); if (!f) return it;
+  if ((it.u === 'g' || it.u === 'ml') && f.cat === 'fat') return { ...it, a: Math.max(1, Math.round(it.a)) }; // oil is counted to the gram
   if (it.u === 'g' || it.u === 'ml') return { ...it, a: Math.max(5, Math.round(it.a / 5) * 5) };
   return { ...it, a: Math.max(0.25, Math.round(it.a * 4) / 4) };
 }
@@ -1378,7 +1396,8 @@ function stepsTarget(k = today()) {
   const weeks = Math.max(0, Math.floor(daysBetween(s.from, k) / 7));
   return Math.min(s.max, s.start + weeks * s.inc);
 }
-const targets = () => ({ k: S.profile.kcal, p: S.profile.protein, c: S.profile.carbs, f: S.profile.fat, w: S.profile.waterMl });
+// fasting days have their own targets (plant foods, one whey): lower protein, higher carbs
+const targets = (k = today()) => { const p = S.profile, ft = p.fastTargets; if (ft && isFastingDay(k)) return { k: ft.kcal, p: ft.protein, c: ft.carbs, f: ft.fat, w: p.waterMl, fast: true }; return { k: p.kcal, p: p.protein, c: p.carbs, f: p.fat, w: p.waterMl }; };
 
 function dayTotals(k) {
   const d = peekDay(k); if (!d) return { k: 0, p: 0, c: 0, f: 0, n: 0 };
@@ -1503,7 +1522,7 @@ function recommend(inp) {
   const k = today();
   const fasting = inp.fasting ?? isFastingDay(k);
   const opts = { avoid: inp.avoid || [], fasting };
-  const d = peekDay(k), t = targets(), tot = dayTotals(k);
+  const d = peekDay(k), t = targets(k), tot = dayTotals(k);
   const loggedSlots = new Set((d?.meals || []).map(m => m.slot));
   const left = Math.max(1, SLOTS.filter(s => !loggedSlots.has(s)).length);
   const hungerF = { light: 0.75, normal: 1, very: 1.25 }[inp.hunger || 'normal'];
@@ -1642,7 +1661,7 @@ const HABITS = [
 function habitStatus(k, h) {
   const d = peekDay(k);
   if (d?.hab?.[h]) return d.hab[h];
-  const isToday = k === today(), t = targets();
+  const isToday = k === today(), t = targets(k);
   const pending = isToday ? 'pending' : 'skipped';
   const tot = dayTotals(k);
   switch (h) {
@@ -1739,7 +1758,7 @@ const POINT_RULES = [
   ['Morning weigh-in', 5, ''],
 ];
 function dayPoints(k) {
-  const d = peekDay(k), t = targets(), tot = dayTotals(k), out = [];
+  const d = peekDay(k), t = targets(k), tot = dayTotals(k), out = [];
   const add = (label, pts, done) => out.push({ label, pts: done ? pts : 0, max: pts, done });
   if (k < (S.profile.startDate || k) || k > today()) return { total: 0, items: [] };
   const planned = SLOTS.filter(s => planFor(k)[s]);
@@ -1762,7 +1781,7 @@ function levelFor(pts) { let lv = 1, need = 300, acc = 0; while (pts >= acc + ne
 function weeklyChallenges(ws = weekStart(today())) {
   const days = []; for (let i = 0; i < 7; i++) days.push(addD(ws, i));
   const past = days.filter(k => k <= today()), t = targets();
-  const pDays = past.filter(k => dayTotals(k).n && dayTotals(k).p >= t.p * 0.95).length;
+  const pDays = past.filter(k => dayTotals(k).n && dayTotals(k).p >= targets(k).p * 0.95).length;
   const planned = plannedSessions(ws, addD(ws, 6)).filter(p => !p.s.opt), doneS = planned.filter(p => workoutsOn(p.k).length).length;
   const weighs = new Set(S.measurements.filter(m => m.kg != null && days.includes(m.date)).map(m => m.date)).size;
   const sl = past.map(k => peekDay(k)?.sleep).filter(x => x != null);
@@ -1784,7 +1803,7 @@ const BADGES = [
   ['streak7', '7-day streak', '7 good days in a row', () => habitStreaks().longest >= 7],
   ['streak30', '30-day streak', '30 good days in a row', () => habitStreaks().longest >= 30],
   ['waist', 'Measured up', 'Log your waist 4 times', () => S.measurements.filter(m => m.waist != null && !m.sample).length >= 4],
-  ['protein_wk', 'Protein week', 'Hit protein on all 7 days of a week', () => { for (let w = weekStart(S.profile.startDate || today()); w <= today(); w = addD(w, 7)) { let ok = 0; for (let i = 0; i < 7; i++) { const k = addD(w, i); if (dayTotals(k).n && dayTotals(k).p >= targets().p * 0.95) ok++; } if (ok === 7) return true; } return false; }],
+  ['protein_wk', 'Protein week', 'Hit protein on all 7 days of a week', () => { for (let w = weekStart(S.profile.startDate || today()); w <= today(); w = addD(w, 7)) { let ok = 0; for (let i = 0; i < 7; i++) { const k = addD(w, i); if (dayTotals(k).n && dayTotals(k).p >= targets(k).p * 0.95) ok++; } if (ok === 7) return true; } return false; }],
   ['down2', 'Trend down 2 kg', 'Weekly average down 2 kg from your first week', () => { const ws = weights(false); if (ws.length < 6) return false; const a = weekAvg(ws, addD(ws[0].date, 6)), b = weekAvg(ws, today()); return a && b && a.v - b.v >= 2; }],
 ];
 
@@ -2465,7 +2484,7 @@ function vNutrition() {
     ${tab === 'today' ? vNutToday() : tab === 'eat' ? vEat() : tab === 'week' ? vWeek() : vFoods()}`;
 }
 function vNutToday() {
-  const k = S.ui.nutDate || today(), d = getDay(k), t = targets(), tot = dayTotals(k), plan = planFor(k);
+  const k = S.ui.nutDate || today(), d = getDay(k), t = targets(k), tot = dayTotals(k), plan = planFor(k);
   const isT = k === today();
   const extras = d.meals.filter(m => !m.planSlot);
   return `
@@ -2746,7 +2765,7 @@ function nutStats(days) {
   for (const k of logged) { const p = planFor(k), d = peekDay(k); for (const s of SLOTS) if (p[s]) { planned++; if (d.meals.some(m => m.planSlot === s)) eaten++; } rest += d.meals.filter(m => m.src === 'restaurant').length; }
   return {
     logged: logged.length, avgK: avg(tots.map(x => x.k)), avgP: avg(tots.map(x => x.p)),
-    inK: tots.filter(x => Math.abs(x.k / t.k - 1) <= 0.1).length, pMet: tots.filter(x => x.p >= t.p * 0.95).length,
+    inK: logged.filter((k, i) => Math.abs(tots[i].k / targets(k).k - 1) <= 0.1).length, pMet: logged.filter((k, i) => tots[i].p >= targets(k).p * 0.95).length,
     planRate: planned ? eaten / planned : null, rest,
   };
 }
@@ -3059,7 +3078,7 @@ function vSeason() {
 function nowHM() { return lateHM(); }
 const hmNum = s => { const [a, b] = (s || '0:0').split(':').map(Number); const v = a + b / 60; return v < dayStart() ? v + 24 : v; };
 function todayTasks(k = today()) {
-  const d = getDay(k), plan = planFor(k), sch = scheduleFor(k), st = sessionStatus(k), t = targets(), tasks = [];
+  const d = getDay(k), plan = planFor(k), sch = scheduleFor(k), st = sessionStatus(k), t = targets(k), tasks = [];
   const weighed = S.measurements.some(m => m.date === k && m.kg != null);
   tasks.push({ id: 'weigh', label: 'Morning weigh-in', sub: 'After the bathroom, before food', done: weighed, a: 'weighModal' });
   for (const s of SLOTS) { const pl = plan[s]; if (!pl) continue; const e = d.meals.find(m => m.planSlot === s); tasks.push({ id: s, label: `${SLOT_LABEL[s]} · ${fmtHM(S.profile.mealTimes[s])}`, sub: e ? `${e.name} · eaten ${fmtTime(e.t)}` : pl.name, done: !!e, a: e ? 'undoPlan' : 'eatPlan', slot: s }); }
@@ -3072,7 +3091,7 @@ function todayTasks(k = today()) {
 }
 // the single most useful thing to do next, with the reason
 function nextAction(k = today()) {
-  const d = getDay(k), t = targets(), tot = dayTotals(k), h = nowHM(), plan = planFor(k), sch = scheduleFor(k), st = sessionStatus(k);
+  const d = getDay(k), t = targets(k), tot = dayTotals(k), h = nowHM(), plan = planFor(k), sch = scheduleFor(k), st = sessionStatus(k);
   if (S.active) return { title: `Finish ${S.active.name}`, why: 'Your sets are saved; pick up where you stopped.', btn: 'Resume workout', a: 'openLive', icon: 'play' };
   const weighed = S.measurements.some(m => m.date === k && m.kg != null);
   if (!weighed && h < 11 && !d.meals.length) return { title: 'Weigh in before breakfast', why: 'Morning weigh-ins on an empty stomach make your weekly trend reliable.', btn: 'Log weight', a: 'weighModal', icon: 'scale' };
@@ -3193,6 +3212,8 @@ function coachDecision(C) {
   if (C.ns.logged < 7 || adher < 0.6) return { tone: 'warn', title: 'Consistency first, no target change', body: 'Your targets can\'t be judged yet because the plan isn\'t being followed most days. Changing calories now would be guessing.', reasons: [`${C.ns.logged}/14 days logged; targets met on about ${Math.round(adher * 100)}% of logged days.`, C.ns.pMet / Math.max(1, C.ns.logged) < 0.7 ? 'Protein is the biggest gap: add a whey shake on low days.' : 'Calories drift above target on several days: restaurants and late nights are the usual cause.'], assumptions };
   if (C.rate < -(C.a0.v * 0.01) && (C.strength != null && C.strength < -2 || (C.sleep != null && C.sleep < 6.3))) return { tone: 'bad', title: 'Losing too fast for your muscle', body: `You're dropping about ${fmtN(-C.rate, 2)} kg/week while ${C.strength != null && C.strength < -2 ? 'your lifts are going down' : 'sleep is short'}. That combination risks losing muscle.`, reasons: [`Weight: ${fmtN(C.rate, 2)} kg/week (more than 1% of body weight).`, C.strength != null ? `Strength: ${fmtN(C.strength, 1)}%.` : 'Strength: not enough data.', C.sleep != null ? `Sleep: ${fmtN(C.sleep, 1)} h average.` : ''].filter(Boolean), action: { label: 'Add 150 kcal per day', kcal: 150 }, assumptions };
   if (C.rate > -0.1 && C.waistCh != null && C.waistCh < -0.5 && (C.strength == null || C.strength >= 0)) return { tone: 'good', title: 'Recomp is working, change nothing', body: 'The scale is flat, but your waist is shrinking and your strength is holding or rising. That means fat is going down while muscle is coming back. Don\'t cut calories because of the scale.', reasons: [`Weight: ${fmtN(C.rate, 2)} kg/week.`, `Waist: ${fmtN(C.waistCh, 1)} cm.`, C.strength != null ? `Strength: +${fmtN(C.strength, 1)}%.` : ''].filter(Boolean), assumptions };
+  if (C.rate < -1.2) return { tone: 'bad', title: 'Losing faster than 1.2 kg/week', body: 'This pace risks muscle. Add 150 kcal a day (for example 50 g more rice at lunch) and re-check in 2 weeks.', reasons: [`Weight: ${fmtN(C.rate, 2)} kg/week (target 0.5–1 kg/week).`], assumptions };
+  if (C.rate > -0.4 && C.rate <= -0.1 && adher >= 0.75 && (C.waistCh == null || C.waistCh > -0.5)) return { tone: 'warn', title: 'Slower than target: small adjustment', body: 'You are following the plan but losing under 0.4 kg/week. Take 150 kcal off (50 g less rice at lunch) or add 2,000 steps a day, then re-check in 2 weeks.', reasons: [`Weight: ${fmtN(C.rate, 2)} kg/week (target 0.5–1 kg/week).`, C.waistCh != null ? `Waist: ${fmtN(C.waistCh, 1)} cm.` : 'Waist: not measured — a tape makes this call more reliable.'], assumptions };
   if (C.rate > -0.1 && (C.waistCh == null || C.waistCh > -0.5) && adher >= 0.75) return { tone: 'warn', title: 'Trend has stalled: small adjustment', body: 'Weight and waist have been flat for a few weeks while you followed the plan well. A small change should restart progress.', reasons: [`Weight: ${fmtN(C.rate, 2)} kg/week over the last weeks.`, C.waistCh != null ? `Waist: ${fmtN(C.waistCh, 1)} cm.` : 'Waist: not measured, so this relies on the scale.', `Plan followed on ${Math.round(adher * 100)}% of days.`], action: { label: 'Reduce 150 kcal per day', kcal: -150 }, alt: 'Or keep calories and add about 2,000 steps a day.', assumptions };
   if (C.hunger != null && C.hunger >= 4) return { tone: 'warn', title: 'Hunger is high: keep calories, change the food', body: 'Progress is moving, but hunger is high enough to threaten consistency. Keep the same calories and make them more filling.', reasons: [`Hunger: ${fmtN(C.hunger, 1)}/5 average.`, 'Swap some rice/bread for potatoes, big salads, soups and fruit; keep protein at every meal.', C.sleep != null && C.sleep < 6.5 ? `Short sleep (${fmtN(C.sleep, 1)} h) increases hunger. An extra 30–45 minutes helps.` : ''].filter(Boolean), assumptions };
   return { tone: 'good', title: 'On track, keep going', body: `You're losing about ${fmtN(-C.rate, 2)} kg/week${C.strength != null ? ` with strength ${C.strength >= 0 ? 'rising' : 'about steady'}` : ''}. That's a good recomp pace. No change needed.`, reasons: C.sig.filter(s => s.status !== 'na').map(s => `${s.label}: ${s.value}.`), assumptions };
@@ -4343,6 +4364,18 @@ function normalize() {
     S.program.templates = deep(SEED_TEMPLATES); S.program.mode = 'cycle'; S.program.cycle = [...DEFAULT_CYCLE];
     S.profile.restCompound = 150; S.profile.restIsolation = 90;
     setTimeout(() => { Store.save('program', 'profile'); toast('Training plan set: Push A → Pull A → Push B → Pull B → Rest.', { ms: 8000 }); }, 700);
+  }
+  if (S.profile.onboarded && pv0 < 16) {
+    // Nov 16 2026: from-scratch cut (102 kg, 175 cm, 24 y, InBody 35% fat, 6 sessions/7 days, ~4.5k steps)
+    const p = S.profile; p.pv = 16;
+    Object.assign(p, { kcal: 1900, protein: 190, fat: 55, carbs: 160, fastTargets: { kcal: 1780, protein: 98, fat: 40, carbs: 265 }, trainTime: '21:30' });
+    p.mealTimes = { breakfast: '10:00', lunch: '15:00', snack: '19:30', dinner: '23:00' };
+    p.steps = { start: 6000, inc: 1000, max: 8000, from: today() };
+    for (const m of CUT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
+    S.plan = paulaWeek();
+    const d = S.days[today()]; if (d && d.planEdits) d.planEdits = {};
+    if (!S.measurements.some(m => m.date === today() && !m.sample)) S.measurements.push({ id: uid(), date: today(), kg: 102, bf: 35, bfMethod: 'InBody', notes: 'Start of the new cut' });
+    setTimeout(() => { Store.save('profile', 'meals', 'plan', 'measurements', dayBucket(today())); toast('New cut plan is in: 1,900 kcal · 190 g protein (fasting days 1,780 · 98 g).', { ms: 9000 }); }, 750);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
