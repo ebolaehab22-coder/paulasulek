@@ -535,6 +535,10 @@ ul.plain { margin: 0; padding-left: 18px; display: flex; flex-direction: column;
 .onb .logo-img { width: 40px; height: 40px; }
 .logo b { font-size: 22px; letter-spacing: 0; }
 
+.picks{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;align-items:flex-end}
+.pick{display:flex;flex-direction:column;gap:4px;flex:1 1 140px;font-size:12px;font-weight:600;color:var(--fg3,#64748b);text-transform:uppercase;letter-spacing:.04em}
+.pick select{text-transform:none;letter-spacing:0;font-weight:500;color:var(--fg,#0B2A5B)}
+
 </style>
 <div id="root"></div>
 <script>
@@ -548,6 +552,7 @@ const APP_LOGO = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAU
 // [id, name, category, basis('g' per 100g | 'ml' per 100ml | 'u' per 1 item), kcal, protein, carbs, fat, measures[[label, grams]], tags[], animal]
 const SEED_FOODS_RAW = [
   ['baladi','Baladi bread','carb','g',250,9,51,1.2,[['loaf',100],['half loaf',50]],['egyptian'],null],
+  ['kaiser','Kaiser roll','carb','g',290,9.5,52,4.5,[['roll',70]],['egyptian']],
   ['fino','Fino bread','carb','g',285,9,54,3.5,[['roll',60]],['egyptian'],null],
   ['shami','Shami (Syrian) bread','carb','g',275,9,56,1.2,[['loaf',80]],['egyptian'],null],
   ['toast','Toast, white','carb','g',265,9,49,3.2,[['slice',25]],[],null],
@@ -665,7 +670,7 @@ const SEED_FOODS_RAW = [
 
 // Arabic names so foods can be searched in Arabic too
 const FOOD_AR = {
-  baladi:'عيش بلدي رغيف', fino:'عيش فينو', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
+  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
   chicken:'فراخ صدور دجاج مشوي', chicken_thigh:'فراخ ورك دجاج', beef:'لحمة حمراء قليلة الدهون لحم', mince:'لحمة مفرومة', kofta:'كفتة', kofta_lean:'كفتة قليلة الدهون', liver:'كبدة', sojuk:'سجق سجوق', kebab:'كباب', eggs:'بيض', egg_white:'بياض بيض', turkey:'تركي لانشون', whey:'واي بروتين سكوب', tuna:'تونة', fish:'سمك', tofu:'توفو', shawarma_home:'شاورما فراخ بيتي', burger_patty:'برجر لحمة', burger_bun:'عيش برجر',
   greek:'زبادي يوناني', yogurt:'زبادي', hp_yogurt:'زبادي عالي البروتين', milk_skim:'لبن خالي الدسم', milk_low:'لبن قليل الدسم', milk:'لبن كامل الدسم حليب', roumy:'جبنة رومي', cheddar:'جبنة شيدر', white_cheese:'جبنة لايت بيضاء قريش', feta:'جبنة فيتا', istanbuli:'جبنة اسطنبولي بيضاء', white_full:'جبنة بيضاء طرية كاملة الدسم قليلة الملح دومتي', cottage:'جبنة قريش كوتاج', yogurt_sauce:'صوص زبادي',
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
@@ -1483,6 +1488,58 @@ function planFor(k) {
   return out;
 }
 function planDayTotals(wd) { return SLOTS.reduce((t, s) => { const p = S.plan[wd]?.[s]; if (!p) return t; const n = itemsNut(mealItems(p.m, p.s)); t.k += n.k; t.p += n.p; t.c += n.c; t.f += n.f; return t; }, { k: 0, p: 0, c: 0, f: 0 }); }
+
+// ---------- per-meal protein / carb choice (Nov 16 2026) ----------
+const PROTEIN_PICKS = ['chicken', 'beef', 'liver', 'kofta_lean', 'mince', 'shawarma_home', 'chicken_thigh'];
+const CARB_PICKS = ['rice', 'tortilla_my', 'pasta', 'baladi', 'toast', 'fino', 'kaiser', 'potato', 'sweet_potato', 'rice_egy'];
+const PICK_SHORT = { chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
+const pickKind = id => PROTEIN_PICKS.includes(id) ? 'protein' : CARB_PICKS.includes(id) ? 'carb' : null;
+const itemGrams = it => { const f = F(it.f); if (!f) return 0; if (it.u === 'g' || it.u === 'ml') return it.a; if (f.b === 'u') return it.a; return it.a * (measureG(f, it.u) || 1); };
+// swap one ingredient for another of the same kind: proteins matched on protein, carbs matched on carbs
+function compSwapItem(it, toId, ref = it) {
+  const kind = pickKind(it.f), cur = itemNut(ref), f2 = F(toId); if (!f2 || !kind) return it;
+  const per = kind === 'protein' ? f2.p : f2.c, need = kind === 'protein' ? cur.p : cur.c;
+  let g = per ? need / per * 100 : itemGrams(it);
+  // fattier proteins (steak, kofta) would add a lot of calories at equal protein: allow at most +100 kcal
+  if (kind === 'protein' && f2.k) g = Math.min(g, (cur.k + 100) / f2.k * 100);
+  return { f: toId, a: Math.max(10, Math.round(g / 5) * 5), u: 'g' };
+}
+function compMealName(items, fallback) {
+  const pr = items.find(i => pickKind(i.f) === 'protein'), cb = items.find(i => pickKind(i.f) === 'carb');
+  if (!pr && !cb) return fallback;
+  const salad = items.some(i => i.f === 'salad') ? ' & salad' : '';
+  return [pr && PICK_SHORT[pr.f], cb && PICK_SHORT[cb.f].toLowerCase()].filter(Boolean).join(', ') + salad;
+}
+// keep the day on target: change the carbs of the meals still to come (after `slot`), or this meal if it is the last
+function rebalanceDay(k, slot) {
+  const d = getDay(k), t = targets(k), plan = planFor(k), idx = SLOTS.indexOf(slot);
+  let total = 0; for (const s of SLOTS) { const e = d.meals.find(m => m.planSlot === s); if (e) continue; if (plan[s]) total += itemsNut(plan[s].items).k; }
+  total += d.meals.reduce((a, m) => a + (m.k || 0), 0);
+  let diff = total - t.k; if (Math.abs(diff) < 40) return [];
+  const later = SLOTS.slice(idx + 1).filter(s => plan[s] && !d.meals.some(m => m.planSlot === s) && plan[s].items.some(i => pickKind(i.f) === 'carb'));
+  const pool = later.length ? later : (plan[slot] && plan[slot].items.some(i => pickKind(i.f) === 'carb') ? [slot] : []);
+  const changes = [];
+  for (const s of pool) {
+    if (Math.abs(diff) < 20) break;
+    const items = deep(plan[s].items), ci = items.findIndex(i => pickKind(i.f) === 'carb'), it = items[ci], f = F(it.f);
+    const g0 = itemGrams(it), base = MEAL(plan[s].m)?.items?.find(x => x.f === it.f), gBase = base ? itemGrams(base) : g0;
+    const kpg = f.k / 100, share = diff / pool.length;
+    let g = clamp(g0 - share / kpg, gBase * 0.5, gBase * 1.8); g = Math.max(10, Math.round(g / 5) * 5);
+    if (g === g0) continue;
+    diff -= (g0 - g) * kpg; items[ci] = { f: it.f, a: g, u: 'g' };
+    d.planEdits[s] = { m: plan[s].m, name: plan[s].name.replace(/ \(balanced\)$/, '') + ' (balanced)', items };
+    changes.push(`${SLOT_LABEL[s].toLowerCase()} ${PICK_SHORT[it.f]?.toLowerCase() || f.n.toLowerCase()} ${fmtN(g0)} → ${fmtN(g)} g`);
+  }
+  // still well over? drop the cheese in the meals to come before shrinking bread any further
+  if (diff > 40) for (const s of pool) {
+    const cur = getDay(k).planEdits[s]?.items || deep(plan[s].items), ci = cur.findIndex(i => i.f === 'cheddar' || i.f === 'white_full'); if (ci < 0) continue;
+    const it = cur[ci], kk = itemNut(it).k; cur.splice(ci, 1); diff -= kk;
+    d.planEdits[s] = { m: plan[s].m, name: plan[s].name.replace(/ \(balanced\)$/, '') + ' (balanced)', items: cur };
+    changes.push(`${SLOT_LABEL[s].toLowerCase()} without the ${F(it.f).n.toLowerCase()}`);
+    if (diff <= 40) break;
+  }
+  return changes;
+}
 
 // substitutions: match protein for protein foods, calories for the rest
 const SWAP_GROUP = { protein: 'protein', dairy: 'protein', carb: 'carb', restaurant: 'restaurant', fat: 'fat', fruit: 'fruit', sweet: 'fruit', veg: 'veg', meal: 'carb' };
@@ -3165,6 +3222,13 @@ function dailyMessage(k, na, ph) {
   const lead = st === 'done' ? 'Session done. Now protein and sleep.' : tpl ? `${tpl.n} tonight at ${fmtHM(S.profile.trainTime)}.` : sch.type === 'activity' ? 'Activity day: football or a long walk.' : 'Rest day: recover and walk.';
   return `${lead} ${ph.tip}`;
 }
+function compPickers(k, s, pl) {
+  const fasting = isFastingDay(k);
+  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = (kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS).filter(id => F(id) && !(fasting && foodBlockReason(F(id), { fasting: true })));
+    return `<label class="pick"><span>${kind === 'protein' ? 'Protein' : 'Carbs'}</span><select class="input" data-c="compPick" data-k="${k}" data-slot="${s}" data-i="${i}" aria-label="${kind === 'protein' ? 'Protein' : 'Carbs'} for ${SLOT_LABEL[s]}">${list.map(id => `<option value="${id}" ${id === it.f ? 'selected' : ''}>${esc(PICK_SHORT[id])}</option>`).join('')}</select></label>`; }).join('');
+  if (!rows) return '';
+  return `<div class="picks">${rows}${pl.edited ? `<button class="btn sm ghost" data-a="compReset" data-k="${k}" data-slot="${s}">Undo changes</button>` : ''}</div>`;
+}
 function mealPlanCard(k, s, pl, d) {
   const e = d.meals.find(m => m.planSlot === s);
   if (!pl && !e) return `<article class="mp empty"><div class="mp-h"><div><span class="mp-slot">${SLOT_LABEL[s]} · ${fmtHM(S.profile.mealTimes[s])}</span><div class="mp-n muted">No meal planned</div></div><button class="btn sm" data-a="swapMeal" data-slot="${s}" data-k="${k}">Choose meal</button></div></article>`;
@@ -3176,6 +3240,7 @@ function mealPlanCard(k, s, pl, d) {
     <table class="mp-t"><tbody>${(items || []).map(it => { const x = itemNut(it); return `<tr><td>${esc(gramLabel(it))}</td><td class="n">${fmtN(x.k)}</td><td class="n">${fmtN(x.p)}</td></tr>`; }).join('')}</tbody>
       <tfoot><tr><td>Meal total</td><td class="n">${fmtN(n.k)} kcal</td><td class="n">${fmtN(n.p)} P</td></tr></tfoot></table>
     <div class="mp-m"><span><b>${fmtN(n.k)}</b> kcal</span><span><b>${fmtN(n.p)}</b> g protein</span><span><b>${fmtN(n.c)}</b> g carbs</span><span><b>${fmtN(n.f)}</b> g fat</span>${F(items?.[0]?.f)?.src === 'est' || e?.est ? '<span class="est">EST.</span>' : ''}</div>
+    ${!e && pl ? compPickers(k, s, pl) : ''}
     <div class="mp-a">${e ? `<button class="btn sm" data-a="editEntry" data-k="${k}" data-id="${e.id}">${ic('edit')}Edit portion</button><button class="btn sm" data-a="swapMeal" data-slot="${s}" data-k="${k}">${ic('swap')}Replace</button><button class="btn sm ghost" data-a="undoPlan" data-slot="${s}" data-k="${k}">Undo</button>`
       : `<button class="btn sm pri" data-a="eatPlan" data-slot="${s}" data-k="${k}">${ic('check')}Mark as eaten</button><button class="btn sm" data-a="portionModal" data-slot="${s}" data-k="${k}">Ate part</button><button class="btn sm" data-a="planEdit" data-slot="${s}" data-k="${k}">${ic('edit')}Edit portion</button><button class="btn sm" data-a="swapMeal" data-slot="${s}" data-k="${k}">${ic('swap')}Replace</button>`}</div>
   </article>`;
@@ -3354,7 +3419,13 @@ let resizeT; window.addEventListener('resize', () => { clearTimeout(resizeT); re
 
 // ---------- helpers ----------
 const saveDay = k => Store.save(dayBucket(k));
-function addEntry(k, e) { const d = getDay(k); d.meals.push({ id: uid(), t: new Date().toISOString(), portion: 1, ...e }); saveDay(k); }
+function addEntry(k, e) { const d = getDay(k); d.meals.push({ id: uid(), t: new Date().toISOString(), portion: 1, ...e }); saveDay(k); autoBalance(k, e.planSlot || e.slot); }
+// whenever what you eat (or plan to eat) differs from the plan, resize the carbs of the meals still to come so the day lands on target
+function autoBalance(k, slot) {
+  if (!slot || !SLOTS.includes(slot) || k !== today()) return;
+  const ch = rebalanceDay(k, slot); if (!ch.length) return;
+  saveDay(k); setTimeout(() => { render(); toast(`Rest of today adjusted to stay on ${fmtN(targets(k).k)} kcal: ${ch.join('; ')}.`, { ms: 9000 }); }, 350);
+}
 function entryFromItems(items, base) { const n = itemsNut(items); return { ...base, items: deep(items), k: round(n.k), p: round(n.p, 1), c: round(n.c, 1), f: round(n.f, 1) }; }
 function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) o = o[ks[i]] = o[ks[i]] ?? {}; o[ks[ks.length - 1]] = v; }
 function getPath(obj, path) { return path.split('.').reduce((o, k) => o?.[k], obj); }
@@ -3406,7 +3477,7 @@ const A = {
       const nm = { ...deep(MEAL(P.m)), id: 'm_' + uid(), n: P.name + ' (my portion)', custom: true, items: deep(items) }; S.meals.push(nm);
       S.plan[wdOf(P.k)][P.slot] = { m: nm.id, s: 1 }; Store.save('meals', 'plan');
     }
-    closeModal(); render(); toast('Portion updated');
+    closeModal(); render(); toast('Portion updated'); autoBalance(P.k, P.slot);
   },
   quickSheet() {
     const k = today(), s = scheduleFor(k);
@@ -3440,7 +3511,7 @@ const A = {
   },
   undoPlan(el) {
     const slot = el.dataset.slot, k = el.dataset.k || today(), d = getDay(k), i = d.meals.findIndex(m => m.planSlot === slot);
-    if (i < 0) return; const [e] = d.meals.splice(i, 1); saveDay(k); render();
+    if (i < 0) return; const [e] = d.meals.splice(i, 1); saveDay(k); render(); autoBalance(k, slot);
     toast(`${SLOT_LABEL[slot]} removed from today's totals`, { action: () => { getDay(k).meals.push(e); saveDay(k); render(); } });
   },
   openMeal(el) { S.ui.view = 'nutrition'; S.ui.nutTab = 'today'; S.ui.nutDate = null; S.ui.openMeal = el.dataset.slot; render(); window.scrollTo(0, 0); },
@@ -3469,7 +3540,7 @@ const A = {
   swapPick(el) {
     const W = window._swap, o = W.opts[+el.dataset.j]; W.items[W.i] = o.item;
     getDay(W.k).planEdits[W.slot] = { m: W.m, name: W.name + ' (swapped)', items: W.items }; saveDay(W.k);
-    closeModal(); render(); toast(`Swapped to ${F(o.item.f).n}. Today's totals use the new amounts.`);
+    closeModal(); render(); toast(`Swapped to ${F(o.item.f).n}. Today's totals use the new amounts.`); autoBalance(W.k, W.slot);
   },
   swapMeal(el) {
     const slot = el.dataset.slot, wd = el.dataset.wd, k = el.dataset.k;
@@ -3494,6 +3565,7 @@ const A = {
       day.planEdits[X.slot] = { m: x.m.id, name: x.m.n, items };
       if (e) Object.assign(e, entryFromItems(items, { name: x.m.n, mealId: x.m.id, portion: 1 })); // replaces the logged meal, never adds a second one
       saveDay(X.k); toast(`${SLOT_LABEL[X.slot]} replaced with ${x.m.n}${e ? '. The logged entry was updated, not duplicated.' : ''}`);
+      autoBalance(X.k, X.slot);
     }
     closeModal(); render();
   },
@@ -3587,11 +3659,11 @@ const A = {
     const [h, m] = ($('#ee-time').value || '12:00').split(':').map(Number); const t = pd(E.k); if (h < dayStart()) t.setDate(t.getDate() + 1); t.setHours(h, m); e.t = t.toISOString();
     if (E.items) { const before = itemsNut(e.items).k; Object.assign(e, entryFromItems(window._ie.ee.filter(i => +i.a > 0), {})); if (e.planSlot && before) e.portion = round((e.portion || 1) * e.k / before, 2); }
     else { e.k = +$('#ee-k').value || 0; e.p = +$('#ee-p').value || 0; e.c = +$('#ee-c').value || 0; e.f = +$('#ee-f').value || 0; }
-    saveDay(E.k); closeModal(); render(); toast('Entry updated');
+    saveDay(E.k); closeModal(); render(); toast('Entry updated'); autoBalance(E.k, e.planSlot || e.slot);
   },
   delEntry(el) {
     const k = el.dataset.k, d = getDay(k), i = d.meals.findIndex(m => m.id === el.dataset.id); if (i < 0) return;
-    const [e] = d.meals.splice(i, 1); saveDay(k); closeModal(); render();
+    const [e] = d.meals.splice(i, 1); saveDay(k); closeModal(); render(); autoBalance(k, e.planSlot || e.slot);
     toast(`Removed ${esc(e.name)}`, { action: () => { getDay(k).meals.push(e); saveDay(k); render(); } });
   },
 
@@ -3941,6 +4013,21 @@ const A = {
 
 // change / input handlers
 const C = {
+  compPick(el) {
+    const k = el.dataset.k, slot = el.dataset.slot, i = +el.dataset.i, p = planFor(k)[slot]; if (!p || !el.value) return;
+    const items = deep(p.items), before = items[i], kind = pickKind(before.f);
+    const b0 = MEAL(p.m)?.items?.find(x => pickKind(x.f) === kind), ref = b0 ? { f: b0.f, a: b0.a, u: b0.u } : before; // size from the planned amount, not an already-shrunk one
+    items[i] = compSwapItem(before, el.value, ref);
+    const d = getDay(k); if (!d.planEdits) d.planEdits = {};
+    d.planEdits[slot] = { m: p.m, name: compMealName(items, p.name), items };
+    const changes = rebalanceDay(k, slot); saveDay(k); render();
+    const tot = SLOTS.reduce((a, s) => { const e = d.meals.find(m => m.planSlot === s); const pl = planFor(k)[s]; return a + (e ? e.k : pl ? itemsNut(pl.items).k : 0); }, 0);
+    toast(`${PICK_SHORT[el.value]}: ${fmtN(items[i].a)} g.${changes.length ? ' To keep today on target: ' + changes.join('; ') + '.' : ''} Day ≈ ${fmtN(tot)} kcal.`, { ms: 9000 });
+  },
+  compReset(el) {
+    const k = el.dataset.k, d = getDay(k); if (d.planEdits) { delete d.planEdits[el.dataset.slot]; for (const s of SLOTS) if (d.planEdits[s]?.name?.endsWith('(balanced)')) delete d.planEdits[s]; }
+    saveDay(k); render(); toast('Back to the planned meal.');
+  },
   peAdd(el) { if (!el.value) return; const f = F(el.value); window._ie.pe.push({ f: f.id, a: f.b === 'u' ? 1 : 100, u: f.b === 'u' ? 'u' : f.b === 'ml' ? 'ml' : 'g' }); el.value = ''; refreshItemsEditor('pe'); },
   eatNum(el) { eatState()[el.dataset.f] = numOr(el.value, null); render(); },
   foodQ(el) { S.ui.foodQ = el.value; render(); },
