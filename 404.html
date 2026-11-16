@@ -1492,8 +1492,10 @@ function planDayTotals(wd) { return SLOTS.reduce((t, s) => { const p = S.plan[wd
 // ---------- per-meal protein / carb choice (Nov 16 2026) ----------
 const PROTEIN_PICKS = ['chicken', 'beef', 'liver', 'kofta_lean', 'mince', 'shawarma_home', 'chicken_thigh'];
 const CARB_PICKS = ['rice', 'tortilla_my', 'pasta', 'baladi', 'toast', 'fino', 'kaiser', 'potato', 'sweet_potato', 'rice_egy'];
-const PICK_SHORT = { chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
-const pickKind = id => PROTEIN_PICKS.includes(id) ? 'protein' : CARB_PICKS.includes(id) ? 'carb' : null;
+const PICK_SHORT = { tortilla: 'Tortilla wrap', toast_br: 'Brown toast', burger_bun: 'Burger bun', potato_baked: 'Baked potatoes', kofta: 'Kofta (regular)', burger_patty: 'Beef burger patty', chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
+// any meat/poultry or starchy food gets a dropdown, even ones outside the short lists (e.g. a generic tortilla in a replaced meal)
+const pickKind = id => { if (PROTEIN_PICKS.includes(id)) return 'protein'; if (CARB_PICKS.includes(id)) return 'carb'; const f = F(id); if (!f || f.b === 'u') return null; if (f.cat === 'protein' && f.p >= 15 && !/whey|egg/.test(id)) return 'protein'; if (f.cat === 'carb' && f.c >= 15 && !/oat|cereal|granola|cracker|biscuit/.test(id)) return 'carb'; return null; };
+const pickName = id => PICK_SHORT[id] || F(id)?.n || id;
 const itemGrams = it => { const f = F(it.f); if (!f) return 0; if (it.u === 'g' || it.u === 'ml') return it.a; if (f.b === 'u') return it.a; return it.a * (measureG(f, it.u) || 1); };
 // swap one ingredient for another of the same kind: proteins matched on protein, carbs matched on carbs
 function compSwapItem(it, toId, ref = it) {
@@ -1508,7 +1510,7 @@ function compMealName(items, fallback) {
   const pr = items.find(i => pickKind(i.f) === 'protein'), cb = items.find(i => pickKind(i.f) === 'carb');
   if (!pr && !cb) return fallback;
   const salad = items.some(i => i.f === 'salad') ? ' & salad' : '';
-  return [pr && PICK_SHORT[pr.f], cb && PICK_SHORT[cb.f].toLowerCase()].filter(Boolean).join(', ') + salad;
+  return [pr && pickName(pr.f), cb && pickName(cb.f).toLowerCase()].filter(Boolean).join(', ') + salad;
 }
 // keep the day on target: change the carbs of the meals still to come (after `slot`), or this meal if it is the last
 function rebalanceDay(k, slot) {
@@ -1522,13 +1524,13 @@ function rebalanceDay(k, slot) {
   for (const s of pool) {
     if (Math.abs(diff) < 20) break;
     const items = deep(plan[s].items), ci = items.findIndex(i => pickKind(i.f) === 'carb'), it = items[ci], f = F(it.f);
-    const g0 = itemGrams(it), base = MEAL(plan[s].m)?.items?.find(x => x.f === it.f), gBase = base ? itemGrams(base) : g0;
+    const g0 = itemGrams(it), orig = (d.planEdits?.[s]?.orig || MEAL(plan[s].m)?.items || []).find(x => x.f === it.f), gBase = orig ? itemGrams(orig) : g0;
     const kpg = f.k / 100, share = diff / pool.length;
     let g = clamp(g0 - share / kpg, gBase * 0.5, gBase * 1.8); g = Math.max(10, Math.round(g / 5) * 5);
     if (g === g0) continue;
     diff -= (g0 - g) * kpg; items[ci] = { f: it.f, a: g, u: 'g' };
-    d.planEdits[s] = { m: plan[s].m, name: plan[s].name.replace(/ \(balanced\)$/, '') + ' (balanced)', items };
-    changes.push(`${SLOT_LABEL[s].toLowerCase()} ${PICK_SHORT[it.f]?.toLowerCase() || f.n.toLowerCase()} ${fmtN(g0)} → ${fmtN(g)} g`);
+    d.planEdits[s] = { m: plan[s].m, name: plan[s].name.replace(/ \(balanced\)$/, '') + ' (balanced)', items, orig: d.planEdits?.[s]?.orig || deep(plan[s].items) };
+    changes.push(`${SLOT_LABEL[s].toLowerCase()} ${pickName(it.f).toLowerCase()} ${fmtN(g0)} → ${fmtN(g)} g`);
   }
   // still well over? drop the cheese in the meals to come before shrinking bread any further
   if (diff > 40) for (const s of pool) {
@@ -3224,8 +3226,8 @@ function dailyMessage(k, na, ph) {
 }
 function compPickers(k, s, pl) {
   const fasting = isFastingDay(k);
-  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = (kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS).filter(id => F(id) && !(fasting && foodBlockReason(F(id), { fasting: true })));
-    return `<label class="pick"><span>${kind === 'protein' ? 'Protein' : 'Carbs'}</span><select class="input" data-c="compPick" data-k="${k}" data-slot="${s}" data-i="${i}" aria-label="${kind === 'protein' ? 'Protein' : 'Carbs'} for ${SLOT_LABEL[s]}">${list.map(id => `<option value="${id}" ${id === it.f ? 'selected' : ''}>${esc(PICK_SHORT[id])}</option>`).join('')}</select></label>`; }).join('');
+  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = [...new Set([it.f, ...(kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS)])].filter(id => F(id) && (id === it.f || !(fasting && foodBlockReason(F(id), { fasting: true }))));
+    return `<label class="pick"><span>${kind === 'protein' ? 'Protein' : 'Carbs'}</span><select class="input" data-c="compPick" data-k="${k}" data-slot="${s}" data-i="${i}" aria-label="${kind === 'protein' ? 'Protein' : 'Carbs'} for ${SLOT_LABEL[s]}">${list.map(id => `<option value="${id}" ${id === it.f ? 'selected' : ''}>${esc(pickName(id))}</option>`).join('')}</select></label>`; }).join('');
   if (!rows) return '';
   return `<div class="picks">${rows}${pl.edited ? `<button class="btn sm ghost" data-a="compReset" data-k="${k}" data-slot="${s}">Undo changes</button>` : ''}</div>`;
 }
@@ -3472,7 +3474,7 @@ const A = {
   },
   planEditSave() {
     const P = window._pe, items = window._ie.pe.filter(i => +i.a > 0); if (!items.length) { toast('Keep at least one ingredient.'); return; }
-    getDay(P.k).planEdits[P.slot] = { m: P.m, name: P.name, items }; saveDay(P.k);
+    getDay(P.k).planEdits[P.slot] = { m: P.m, name: P.name, items, orig: deep(items) }; saveDay(P.k);
     if ($('#pe-week')?.checked && P.m && MEAL(P.m)) {
       const nm = { ...deep(MEAL(P.m)), id: 'm_' + uid(), n: P.name + ' (my portion)', custom: true, items: deep(items) }; S.meals.push(nm);
       S.plan[wdOf(P.k)][P.slot] = { m: nm.id, s: 1 }; Store.save('meals', 'plan');
@@ -3562,7 +3564,7 @@ const A = {
       Store.save('plan'); toast(all ? `${x.m.n} set for every ${SLOT_LABEL[X.slot].toLowerCase()}` : 'Plan updated');
     } else {
       const items = scaleItems(x.m.items, x.s), day = getDay(X.k), e = day.meals.find(m => m.planSlot === X.slot);
-      day.planEdits[X.slot] = { m: x.m.id, name: x.m.n, items };
+      day.planEdits[X.slot] = { m: x.m.id, name: x.m.n, items, orig: deep(items) };
       if (e) Object.assign(e, entryFromItems(items, { name: x.m.n, mealId: x.m.id, portion: 1 })); // replaces the logged meal, never adds a second one
       saveDay(X.k); toast(`${SLOT_LABEL[X.slot]} replaced with ${x.m.n}${e ? '. The logged entry was updated, not duplicated.' : ''}`);
       autoBalance(X.k, X.slot);
@@ -4016,13 +4018,14 @@ const C = {
   compPick(el) {
     const k = el.dataset.k, slot = el.dataset.slot, i = +el.dataset.i, p = planFor(k)[slot]; if (!p || !el.value) return;
     const items = deep(p.items), before = items[i], kind = pickKind(before.f);
-    const b0 = MEAL(p.m)?.items?.find(x => pickKind(x.f) === kind), ref = b0 ? { f: b0.f, a: b0.a, u: b0.u } : before; // size from the planned amount, not an already-shrunk one
-    items[i] = compSwapItem(before, el.value, ref);
     const d = getDay(k); if (!d.planEdits) d.planEdits = {};
-    d.planEdits[slot] = { m: p.m, name: compMealName(items, p.name), items };
+    // size from the amount first planned for today (after a Replace or portion edit), never from an already-shrunk one
+    const orig = d.planEdits[slot]?.orig || deep(p.items), b0 = orig.find(x => pickKind(x.f) === kind), ref = b0 || before;
+    items[i] = compSwapItem(before, el.value, ref);
+    d.planEdits[slot] = { m: p.m, name: compMealName(items, p.name), items, orig };
     const changes = rebalanceDay(k, slot); saveDay(k); render();
     const tot = SLOTS.reduce((a, s) => { const e = d.meals.find(m => m.planSlot === s); const pl = planFor(k)[s]; return a + (e ? e.k : pl ? itemsNut(pl.items).k : 0); }, 0);
-    toast(`${PICK_SHORT[el.value]}: ${fmtN(items[i].a)} g.${changes.length ? ' To keep today on target: ' + changes.join('; ') + '.' : ''} Day ≈ ${fmtN(tot)} kcal.`, { ms: 9000 });
+    toast(`${pickName(el.value)}: ${fmtN(items[i].a)} g.${changes.length ? ' To keep today on target: ' + changes.join('; ') + '.' : ''} Day ≈ ${fmtN(tot)} kcal.`, { ms: 9000 });
   },
   compReset(el) {
     const k = el.dataset.k, d = getDay(k); if (d.planEdits) { delete d.planEdits[el.dataset.slot]; for (const s of SLOTS) if (d.planEdits[s]?.name?.endsWith('(balanced)')) delete d.planEdits[s]; }
