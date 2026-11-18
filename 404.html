@@ -1063,12 +1063,12 @@ const SEED_PROFILE = {
   activity:'Desk work, ~2,000 steps/day; padel or football 1×/week', experience:'Years of training, returning after an extended break',
   style:'Low volume, high effort, efficient sessions', sleepTarget:7,
   trackRIR:true, restCompound:150, restIsolation:90,
-  dislikes:['oats','tuna','fish','cottage','foul','tofu','quinoa'], dislikeText:['soy','vegan burger'],
+  dislikes:['oats','tuna','fish','cottage','tofu','quinoa'], dislikeText:['soy','vegan burger'],
   lessPreferred:[], favorites:['chicken','beef','kofta','kebab','liver','roumy','turkey','greek','whey','baladi','rice'], favMeals:[], unavailable:[], allergies:[], restrictions:'',
   budget:2, mealTimes:{ breakfast:'10:00', lunch:'15:00', snack:'19:30', dinner:'23:00' }, trainTime:'21:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:17, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:18, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1099,12 +1099,13 @@ const CUT_MEALS = [
   { id:'cut_d_lv', n:'Liver (kebda) wrap & big salad', slot:['dinner','lunch'], items:[['liver',170,'g'],['tortilla_my',1,'tortilla'],['cheddar',15,'g'],['salad',200,'g'],['veg_oil',3,'g']], prep:'Sauté with garlic, pepper and cumin using the 3 g oil.' },
   { id:'cut_d_kf', n:'Kofta wrap & big salad', slot:['dinner','lunch'], items:[['mince',150,'g'],['tortilla_my',1,'tortilla'],['salad',200,'g'],['veg_oil',3,'g']], prep:'Lean mince, grilled or air-fried. Once a week (more fat).' },
   { id:'cut_fb', n:'Baladi bread, peanut butter & fruit', slot:['breakfast'], items:[['baladi',100,'g'],['pb',20,'g'],['fruit',1,'u']], prep:'Fasting day.' },
+  { id:'cut_fb_foul', n:'Foul, baladi bread & salad', slot:['breakfast','dinner'], items:[['foul',250,'g'],['veg_oil',3,'g'],['baladi',60,'g'],['salad',100,'g']], prep:'Fasting day. 250 g foul (about 1 plate) with 3 g oil (a small drizzle), lemon and cumin. 60 g baladi = about ⅔ loaf.' },
   { id:'cut_fl', n:'Lentils, salad & tahini', slot:['lunch'], items:[['lentils',250,'g'],['salad',300,'g'],['tahini',15,'g'],['veg_oil',5,'g']], prep:'Fasting day. Weigh lentils after cooking.' },
   { id:'cut_fs', n:'Whey shake', slot:['snack'], items:[['whey',1,'scoop']], prep:'Fasting day: your one scoop, before the gym.' },
   { id:'cut_fd', n:'Pasta with tomato sauce & chickpeas', slot:['dinner'], items:[['pasta',200,'g'],['tomato_sauce',150,'g'],['chickpeas',200,'g'],['veg_oil',5,'g']], prep:'Fasting day. Weigh pasta and chickpeas after cooking.' },
 ].map(m => ({ ...m, ctx:['home'], cook: 1, min: 20, cost: 2, core: 1, plan: 1 }));
-const CUT_WEEK = { 0:['cut_b','cut_l','cut_s','cut_d_ch'], 1:['cut_b','cut_l','cut_s','cut_d_lv'], 2:['cut_b','cut_l','cut_s','cut_d_ch'], 3:['cut_fb','cut_fl','cut_fs','cut_fd'], 4:['cut_b','cut_l','cut_s','cut_d_kf'], 5:['cut_fb','cut_fl','cut_fs','cut_fd'], 6:['cut_b','cut_l','cut_s','cut_d_st'] };
-const CUT_FAST_WEEK = { 3:['cut_fb','cut_fl','cut_fs','cut_fd'], 5:['cut_fb','cut_fl','cut_fs','cut_fd'] };
+const CUT_WEEK = { 0:['cut_b','cut_l','cut_s','cut_d_ch'], 1:['cut_b','cut_l','cut_s','cut_d_lv'], 2:['cut_b','cut_l','cut_s','cut_d_ch'], 3:['cut_fb_foul','cut_fl','cut_fs','cut_fd'], 4:['cut_b','cut_l','cut_s','cut_d_kf'], 5:['cut_fb_foul','cut_fl','cut_fs','cut_fd'], 6:['cut_b','cut_l','cut_s','cut_d_st'] };
+const CUT_FAST_WEEK = { 3:['cut_fb_foul','cut_fl','cut_fs','cut_fd'], 5:['cut_fb_foul','cut_fl','cut_fs','cut_fd'] };
 SEED_MEALS.push(...CUT_MEALS);
 // everyday versions of the steak day: swap the meat for chicken breast and/or the tortillas for pasta
 const DAY_VARIANTS = [
@@ -4487,6 +4488,13 @@ function normalize() {
     const ins = (tid, x, after) => { const t = S.program.templates.find(t => t.id === tid); if (!t || t.ex.some(e => e.x === x)) return; const st = SEED_TEMPLATES.find(t => t.id === tid)?.ex.find(e => e.x === x); if (!st) return; const k = t.ex.findIndex(e => e.x === after); t.ex.splice(k >= 0 ? k + 1 : t.ex.length, 0, deep(st)); };
     ins('pushA', 'standing_calf', 'leg_ext'); ins('pushB', 'seated_calf', 'leg_curl');
     setTimeout(() => { Store.save('program', 'profile'); toast('Calves added: standing calf raise in Push A, seated calf raise in Push B.', { ms: 8000 }); }, 800);
+  }
+  if (S.profile.onboarded && pv0 < 18) {
+    // Nov 18 2026: foul is fine now, as the fasting-day breakfast
+    S.profile.pv = 18; S.profile.dislikes = (S.profile.dislikes || []).filter(x => x !== 'foul');
+    for (const m of CUT_MEALS) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) });
+    for (const wd of [3, 5]) if (S.plan?.[wd]?.breakfast?.m === 'cut_fb') S.plan[wd].breakfast = { m: 'cut_fb_foul', s: 1 };
+    setTimeout(() => { Store.save('profile', 'meals', 'plan'); toast('Fasting-day breakfast is now foul, baladi & salad.', { ms: 8000 }); }, 850);
   }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
