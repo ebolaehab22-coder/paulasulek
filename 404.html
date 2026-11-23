@@ -556,6 +556,8 @@ const SEED_FOODS_RAW = [
   ['sardines','Sardines, canned in oil (drained)','protein','g',208,24.6,0,11.5,[['can',90]],[],'fish'],
   ['chickpeas_roast','Roasted chickpeas (dry, crunchy)','protein','g',369,19,61,6,[['handful',30]],['egyptian'],null],
   ['tameya_basma','Basma frozen chickpea falafel, air-fried','protein','g',230,7.5,23,11.5,[['piece',20]],['egyptian'],null],
+  ['tuna_dolphin','Dolphin Gold tuna slices (oil drained)','protein','g',170,24,0,7,[['can',110]],['egyptian'],'fish'],
+  ['termes','Termes (lupini beans), ready to eat','protein','g',116,15.6,9.3,2.9,[['cup',165]],['egyptian'],null],
   ['white_beans','White beans (fasolia), cooked','protein','g',139,9.7,25,0.35,[['cup',180]],['egyptian'],null],
   ['tameya','Ta\'meya (falafel), fried','protein','g',333,13.3,31.8,17.8,[['piece',20]],['egyptian'],null],
   ['hummus','Hummus','protein','g',166,7.9,14.3,9.6,[['tbsp',15]],[],null],
@@ -678,7 +680,7 @@ const SEED_FOODS_RAW = [
 
 // Arabic names so foods can be searched in Arabic too
 const FOOD_AR = {
-  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', white_beans:'فاصوليا بيضاء', tameya_basma:'طعمية حمص بسمة فلافل', chickpeas_roast:'حمص محمص مقرمش', shrimp:'جمبري', sardines:'سردين', tuna:'تونة', fish:'سمك بلطي مشوي', tameya:'طعمية فلافل', hummus:'حمص بالطحينة', peas:'بسلة', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
+  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', white_beans:'فاصوليا بيضاء', tuna_dolphin:'تونة دولفين جولد شرائح', termes:'ترمس', tameya_basma:'طعمية حمص بسمة فلافل', chickpeas_roast:'حمص محمص مقرمش', shrimp:'جمبري', sardines:'سردين', tuna:'تونة', fish:'سمك بلطي مشوي', tameya:'طعمية فلافل', hummus:'حمص بالطحينة', peas:'بسلة', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
   chicken:'فراخ صدور دجاج مشوي', chicken_thigh:'فراخ ورك دجاج', beef:'لحمة حمراء قليلة الدهون لحم', mince:'لحمة مفرومة', kofta:'كفتة', kofta_lean:'كفتة قليلة الدهون', liver:'كبدة', sojuk:'سجق سجوق', kebab:'كباب', eggs:'بيض', egg_white:'بياض بيض', turkey:'تركي لانشون', whey:'واي بروتين سكوب', tuna:'تونة', fish:'سمك', tofu:'توفو', shawarma_home:'شاورما فراخ بيتي', burger_patty:'برجر لحمة', burger_bun:'عيش برجر',
   greek:'زبادي يوناني', yogurt:'زبادي', hp_yogurt:'زبادي عالي البروتين', milk_skim:'لبن خالي الدسم', milk_low:'لبن قليل الدسم', milk:'لبن كامل الدسم حليب', roumy:'جبنة رومي', cheddar:'جبنة شيدر', white_cheese:'جبنة لايت بيضاء قريش', feta:'جبنة فيتا', istanbuli:'جبنة اسطنبولي بيضاء', white_full:'جبنة بيضاء طرية كاملة الدسم قليلة الملح دومتي', cottage:'جبنة قريش كوتاج', yogurt_sauce:'صوص زبادي',
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
@@ -1071,12 +1073,12 @@ const SEED_PROFILE = {
   activity:'Desk work, ~2,000 steps/day; padel or football 1×/week', experience:'Years of training, returning after an extended break',
   style:'Low volume, high effort, efficient sessions', sleepTarget:7,
   trackRIR:true, restCompound:150, restIsolation:90,
-  dislikes:['oats','cottage','tofu','quinoa'], dislikeText:['soy','vegan burger'],
+  dislikes:['oats','cottage','tofu','quinoa','sardines'], dislikeText:['soy','vegan burger'],
   lessPreferred:[], favorites:['chicken','beef','kofta','kebab','liver','roumy','turkey','greek','whey','baladi','rice'], favMeals:[], unavailable:[], allergies:[], restrictions:'',
   budget:2, mealTimes:{ breakfast:'10:00', lunch:'15:00', snack:'19:30', dinner:'23:00' }, trainTime:'21:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:22, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:23, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1131,7 +1133,9 @@ const NAT_MEALS = [
   { id:'nat_s_pb', n:'Peanut butter sandwich & banana (work)', slot:['snack','breakfast'], items:[['toast',25,'g'],['pb',20,'g'],['banana',1,'medium']], prep:'1 slice toast, 20 g peanut butter (a heaped tablespoon), 1 banana.' },
   { id:'nat_s_hum', n:'Hummus box & cucumber (work)', slot:['snack'], items:[['hummus',100,'g'],['cucumber',200,'g'],['baladi',30,'g']], prep:'Hummus in a sealed box is fine out of the fridge for a few hours. Dip cucumber sticks; 30 g baladi = about ⅓ loaf.' },
   // work-friendly snacks: no heating, no fridge needed for a few hours, eaten at work around 7:30 PM
-  { id:'nat_s_tuna', n:'Tuna pocket & cucumber (work)', slot:['snack'], items:[['tuna',120,'g'],['baladi',50,'g'],['cucumber',150,'g']], prep:'Fish day. Take 1 easy-open can of light tuna + ½ baladi + a cucumber. Drain the can at work, add lemon & cumin from home.' },
+  { id:'nat_s_tuna', n:'Tuna pocket & cucumber (work)', slot:['snack'], items:[['tuna_dolphin',110,'g'],['baladi',50,'g'],['cucumber',150,'g']], prep:'Fish day. 1 can Dolphin Gold tuna (easy-open, no fridge) + ½ baladi + a cucumber. Pour off the oil before eating — it is about 100 kcal.' },
+  { id:'nat_s_termes', n:'Termes box & an apple (work)', slot:['snack'], items:[['termes',200,'g'],['apple',1,'medium']], prep:'200 g ready-to-eat termes (rinse to cut the salt) in a sealed box + 1 apple. Fine out of the fridge for the day.' },
+  { id:'nat_s_balls', n:'Chickpea–peanut date balls (work)', slot:['snack'], items:[['chickpeas_roast',40,'g'],['pb',20,'g'],['dates',20,'g']], prep:'Make at home: blend 40 g roasted chickpeas, 20 g peanut butter and 2–3 dates; roll into 3–4 balls. Keeps 3–4 days in a box without a fridge. (Weights are per snack; make a batch of 4.)' },
   { id:'nat_s_sard', n:'Sardine pocket & cucumber (work)', slot:['snack'], items:[['sardines',90,'g'],['baladi',50,'g'],['cucumber',150,'g']], prep:'Fish day. 1 can sardines in oil, drained well, + ½ baladi + a cucumber.' },
   { id:'nat_s_chick', n:'Roasted chickpeas & an apple (work)', slot:['snack'], items:[['chickpeas_roast',60,'g'],['apple',1,'medium']], prep:'Pack 60 g crunchy roasted chickpeas (2 handfuls) in a small box + 1 apple.' },
   { id:'nat_d_pasta', n:'Chickpea pasta in tomato sauce', slot:['dinner','lunch'], items:[['pasta',120,'g'],['chickpeas',170,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Weigh pasta and chickpeas cooked.' },
@@ -1139,18 +1143,18 @@ const NAT_MEALS = [
   { id:'nat_d_tam', n:'Foul & air-fried falafel dinner', slot:['dinner','breakfast'], items:[['foul',200,'g'],['tameya_basma',80,'g'],['baladi',50,'g'],['salad',150,'g']], prep:'Basma falafel in the air fryer, no extra oil (about 4 pieces).' },
   { id:'nat_d_bowl', n:'White bean & lentil bowl with tahini', slot:['dinner','lunch'], items:[['white_beans',200,'g'],['lentils',150,'g'],['salad',200,'g'],['tahini',15,'g']], prep:'Highest-protein plate of the fast: beans and lentils over salad, tahini-lemon dressing.' },
   // fish days (Coptic Nativity fast: fish allowed every day except Wednesday & Friday). Grilled / oven fish, oil counted; tuna = canned LIGHT tuna, max 1 can a day.
-  { id:'nat_fb_tunafoul', n:'Tuna & foul, baladi & salad', slot:['breakfast'], items:[['tuna',80,'g'],['foul',200,'g'],['baladi',50,'g'],['salad',100,'g'],['veg_oil',3,'g']], prep:'Fish day. ⅔ can of light tuna (drained) mixed into the foul with lemon & cumin.' },
-  { id:'nat_fb_tunasand', n:'Tuna sandwich & salad', slot:['breakfast','dinner'], items:[['tuna',120,'g'],['baladi',80,'g'],['salad',150,'g'],['veg_oil',3,'g']], prep:'Fish day. 1 can light tuna (drained) with onion, lemon, cumin and 3 g oil in baladi bread.' },
+  { id:'nat_fb_tunafoul', n:'Tuna & foul, baladi & salad', slot:['breakfast'], items:[['tuna_dolphin',80,'g'],['foul',200,'g'],['baladi',50,'g'],['salad',100,'g'],['veg_oil',3,'g']], prep:'Fish day. ¾ can Dolphin tuna (oil poured off) mixed into the foul with lemon & cumin.' },
+  { id:'nat_fb_tunasand', n:'Tuna sandwich & salad', slot:['breakfast','dinner'], items:[['tuna_dolphin',110,'g'],['baladi',80,'g'],['salad',150,'g'],['veg_oil',3,'g']], prep:'Fish day. 1 can Dolphin tuna (oil poured off) with onion, lemon & cumin in baladi bread.' },
   { id:'nat_fl_fish', n:'Grilled fish, rice & tahini salad', slot:['lunch','dinner'], items:[['fish',250,'g'],['rice',150,'g'],['salad',200,'g'],['tahini',10,'g'],['veg_oil',5,'g']], prep:'Fish day. Grilled or oven bolti / bouri (weigh cooked, no skin & bones). Not fried: frying adds 150–300 kcal of oil.' },
   { id:'nat_fl_shrimp', n:'Shrimp in tomato with rice', slot:['lunch','dinner'], items:[['shrimp',250,'g'],['rice',150,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Shrimp cooked in tomato sauce with garlic, 8 g oil (2 tsp).' },
   { id:'nat_fl_singari', n:'Fish singari with potatoes', slot:['lunch','dinner'], items:[['fish',250,'g'],['potato',250,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Oven tray of fish, potatoes, tomato, peppers & garlic with 8 g oil.' },
-  { id:'nat_fd_tunapasta', n:'Tuna pasta in tomato sauce', slot:['dinner','lunch'], items:[['tuna',120,'g'],['pasta',150,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day. 1 can light tuna (drained). Weigh pasta cooked.' },
+  { id:'nat_fd_tunapasta', n:'Tuna pasta in tomato sauce', slot:['dinner','lunch'], items:[['tuna_dolphin',110,'g'],['pasta',150,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day. 1 can Dolphin tuna (oil poured off). Weigh pasta cooked.' },
   { id:'nat_fd_fishwrap', n:'Grilled fish wrap & tahini salad', slot:['dinner','lunch'], items:[['fish',200,'g'],['tortilla_my',1,'tortilla'],['salad',200,'g'],['tahini',10,'g']], prep:'Fish day. Check the tortilla pack has no milk if you are strict.' },
-  { id:'nat_fd_shrimppasta', n:'Shrimp pasta', slot:['dinner','lunch'], items:[['shrimp',200,'g'],['pasta',150,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day.' },
+  { id:'nat_fd_shrimppasta', n:'Shrimp pasta', slot:['dinner','lunch'], items:[['shrimp',200,'g'],['pasta',120,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day.' },
   { id:'nat_fd_fishsoup', n:'Grilled fish & lentil soup', slot:['dinner'], items:[['fish',200,'g'],['lentil_soup',300,'g'],['salad',150,'g']], prep:'Fish day.' },
 ].map(m => ({ ...m, ctx:['home'], cook: 1, min: 20, cost: 1, core: 1, plan: 1, fast: 1 }));
 // weekday 0 = Sunday … 6 = Saturday
-const NAT_WEEK = { 6:['nat_b_tam','nat_fl_fish','nat_s_tuna','nat_fd_shrimppasta'], 0:['nat_b_tam','nat_fl_shrimp','nat_s_sard','nat_fd_fishwrap'], 1:['nat_b_foul','nat_fl_singari','nat_s_tuna','nat_fd_fishsoup'], 2:['nat_b_hum','nat_fl_fish','nat_s_sard','nat_fd_fishwrap'], 3:['nat_b_foul','nat_l_len','nat_s_hum','nat_d_pasta'], 4:['nat_b_tam','nat_fl_singari','nat_s_tuna','nat_fd_shrimppasta'], 5:['nat_b_foul','nat_l_chk','nat_s_chick','nat_d_bowl'] };
+const NAT_WEEK = { 6:['nat_b_tam','nat_fl_fish','nat_s_tuna','nat_fd_shrimppasta'], 0:['nat_b_tam','nat_fl_shrimp','nat_s_balls','nat_fd_fishwrap'], 1:['nat_b_foul','nat_fl_singari','nat_s_tuna','nat_fd_fishsoup'], 2:['nat_b_hum','nat_fl_fish','nat_s_termes','nat_fd_fishwrap'], 3:['nat_b_foul','nat_l_len','nat_s_termes','nat_d_pasta'], 4:['nat_b_tam','nat_fl_singari','nat_s_tuna','nat_fd_shrimppasta'], 5:['nat_b_foul','nat_l_chk','nat_s_termes','nat_d_bowl'] };
 SEED_MEALS.push(...NAT_MEALS);
 // everyday versions of the steak day: swap the meat for chicken breast and/or the tortillas for pasta
 const DAY_VARIANTS = [
@@ -1558,9 +1562,9 @@ function planFor(k) {
 function planDayTotals(wd) { return SLOTS.reduce((t, s) => { const p = S.plan[wd]?.[s]; if (!p) return t; const n = itemsNut(mealItems(p.m, p.s)); t.k += n.k; t.p += n.p; t.c += n.c; t.f += n.f; return t; }, { k: 0, p: 0, c: 0, f: 0 }); }
 
 // ---------- per-meal protein / carb choice (Nov 16 2026) ----------
-const PROTEIN_PICKS = ['chicken', 'beef', 'liver', 'kofta_lean', 'mince', 'shawarma_home', 'chicken_thigh', 'fish', 'shrimp', 'tuna', 'sardines', 'white_beans', 'lentils', 'chickpeas', 'foul'];
+const PROTEIN_PICKS = ['chicken', 'beef', 'liver', 'kofta_lean', 'mince', 'shawarma_home', 'chicken_thigh', 'fish', 'shrimp', 'tuna_dolphin', 'tuna', 'white_beans', 'lentils', 'chickpeas', 'foul', 'termes'];
 const CARB_PICKS = ['rice', 'tortilla_my', 'pasta', 'baladi', 'toast', 'fino', 'kaiser', 'potato', 'sweet_potato', 'rice_egy'];
-const PICK_SHORT = { tortilla: 'Tortilla wrap', toast_br: 'Brown toast', burger_bun: 'Burger bun', potato_baked: 'Baked potatoes', kofta: 'Kofta (regular)', burger_patty: 'Beef burger patty', chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', fish: 'Grilled fish (bolti)', shrimp: 'Shrimp', tuna: 'Tuna (light, canned)', sardines: 'Sardines', white_beans: 'White beans', lentils: 'Lentils', chickpeas: 'Chickpeas', foul: 'Foul', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
+const PICK_SHORT = { tortilla: 'Tortilla wrap', toast_br: 'Brown toast', burger_bun: 'Burger bun', potato_baked: 'Baked potatoes', kofta: 'Kofta (regular)', burger_patty: 'Beef burger patty', chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', fish: 'Grilled fish (bolti)', shrimp: 'Shrimp', tuna: 'Tuna (light, canned)', tuna_dolphin: 'Dolphin tuna', termes: 'Termes (lupini)', white_beans: 'White beans', lentils: 'Lentils', chickpeas: 'Chickpeas', foul: 'Foul', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
 // any meat/poultry or starchy food gets a dropdown, even ones outside the short lists (e.g. a generic tortilla in a replaced meal)
 const pickKind = id => { if (PROTEIN_PICKS.includes(id)) return 'protein'; if (CARB_PICKS.includes(id)) return 'carb'; const f = F(id); if (!f || f.b === 'u') return null; if (f.cat === 'protein' && f.p >= 15 && !/whey|egg/.test(id)) return 'protein'; if (f.cat === 'carb' && f.c >= 15 && !/oat|cereal|granola|cracker|biscuit/.test(id)) return 'carb'; return null; };
 const pickName = id => PICK_SHORT[id] || F(id)?.n || id;
@@ -3297,7 +3301,7 @@ function dailyMessage(k, na, ph) {
 }
 function compPickers(k, s, pl) {
   const fasting = isFastingDay(k);
-  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = [...new Set([it.f, ...(kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS)])].filter(id => F(id) && (id === it.f || !(fasting && foodBlockReason(F(id), { fasting: true, fish: fishOK(k) }))));
+  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = [...new Set([it.f, ...(kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS)])].filter(id => F(id) && (id === it.f || (!(fasting && foodBlockReason(F(id), { fasting: true, fish: fishOK(k) })) && foodBlockReason(F(id)) !== 'disliked')));
     return `<label class="pick"><span>${kind === 'protein' ? 'Protein' : 'Carbs'}</span><select class="input" data-c="compPick" data-k="${k}" data-slot="${s}" data-i="${i}" aria-label="${kind === 'protein' ? 'Protein' : 'Carbs'} for ${SLOT_LABEL[s]}">${list.map(id => `<option value="${id}" ${id === it.f ? 'selected' : ''}>${esc(pickName(id))}</option>`).join('')}</select></label>`; }).join('');
   if (!rows) return '';
   return `<div class="picks">${rows}${pl.edited ? `<button class="btn sm ghost" data-a="compReset" data-k="${k}" data-slot="${s}">Undo changes</button>` : ''}</div>`;
@@ -4475,8 +4479,8 @@ function normalize() {
   if (!S.plan || typeof S.plan !== 'object') S.plan = {};
   for (let w = 0; w < 7; w++) if (!S.plan[w]) S.plan[w] = generatePlanDay(w, 1000 + w * 37);
   if (needV2) personalize();
-  else if (needV6) { S.profile.theme = 'light'; S.profile.pv = 6; setTimeout(() => Store.save('profile'), 200); }
-  const pv0 = S.profile.pv || 0; if (S.profile.onboarded && pv0 < 8) S.profile.pv = 8;
+  else if (needV6) { S.profile.theme = 'light'; S.profile.pv = Math.max(S.profile.pv || 0, 6); setTimeout(() => Store.save('profile'), 200); }
+  const pv0 = S.profile.pv || 0; if (S.profile.onboarded && pv0 < 8) S.profile.pv = Math.max(S.profile.pv || 0, 8);
   if (pv0 < 8 && S.profile.onboarded) {
     for (const m of STEAK_DAY) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) });
     const k = '2026-11-07';
@@ -4484,51 +4488,51 @@ function normalize() {
     setTimeout(() => { Store.save('meals', 'foods', dayBucket(today()), 'profile'); if (today() === k) toast('Today\'s plan is your steak day: about 2,160 kcal and 181 g protein.', { ms: 8000 }); }, 400);
   }
   if (S.profile.onboarded && pv0 < 9) {
-    S.profile.pv = 9;
+    S.profile.pv = Math.max(S.profile.pv || 0, 9);
     for (const m of [...STEAK_DAY, ...DAY_VARIANTS]) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(i => ({ f: i[0], a: i[1], u: i[2] })) });
     S.plan = paulaWeek();
     setTimeout(() => { Store.save('meals', 'plan', 'profile'); toast('Your everyday plan is the steak day now: steak or chicken, tortilla or pasta. Wed & Fri stay fasting.', { ms: 9000 }); }, 400);
   }
   if (S.profile.onboarded && pv0 < 10) {
-    S.profile.pv = 10;
+    S.profile.pv = Math.max(S.profile.pv || 0, 10);
     const seed = STEAK_DAY.find(m => m.id === 'sd_b'), cur = S.meals.find(m => m.id === 'sd_b');
     if (cur) { cur.n = seed.n; cur.prep = seed.prep; cur.items = seed.items.map(i => ({ f: i[0], a: i[1], u: i[2] })); }
     setTimeout(() => Store.save('meals', 'foods', 'profile'), 450);
   }
   if (S.profile.onboarded && pv0 < 11) {
-    S.profile.pv = 11;
+    S.profile.pv = Math.max(S.profile.pv || 0, 11);
     const add = { pushA: 'reverse_crunch', pullA: 'back_ext', pushB: 'pallof', pullB: 'db_side_bend' };
     for (const [tid, x] of Object.entries(add)) { const t = S.program.templates.find(t => t.id === tid), st = SEED_TEMPLATES.find(t => t.id === tid).ex.find(e => e.x === x); if (t && st && !t.ex.some(e => e.x === x || (x === 'reverse_crunch' && e.x === 'cable_crunch'))) t.ex.push(deep(st)); }
     setTimeout(() => { Store.save('program', 'exercises', 'profile'); toast('Core work added: one core exercise at the end of each workout, 3 sets each per week.', { ms: 9000 }); }, 500);
   }
   if (S.profile.onboarded && pv0 < 12) {
-    S.profile.pv = 12;
+    S.profile.pv = Math.max(S.profile.pv || 0, 12);
     const t = S.program.templates.find(t => t.id === 'pushA'), e = t?.ex.find(e => e.x === 'cable_crunch'); if (e) { e.x = 'reverse_crunch'; e.sets = 3; e.lo = 10; e.hi = 15; }
     const ae = S.active?.ex?.find(e => e.x === 'cable_crunch' && !e.sets.some(s => s.done)); if (ae) { ae.x = 'reverse_crunch'; ae.lo = 10; ae.hi = 15; ae.sets.forEach(s => s.w = ''); }
     setTimeout(() => { Store.save('program', 'exercises', 'profile', 'active'); toast('Cable crunch replaced with reverse crunch in Push A.', { ms: 8000 }); }, 550);
   }
   if (S.profile.onboarded && pv0 < 13) {
-    S.profile.pv = 13;
+    S.profile.pv = Math.max(S.profile.pv || 0, 13);
     const ins = (tid, x, after, row) => { const t = S.program.templates.find(t => t.id === tid); if (!t || t.ex.some(e => e.x === x)) return; const st = SEED_TEMPLATES.find(t => t.id === tid)?.ex.find(e => e.x === x); if (!st) return; const k = t.ex.findIndex(e => e.x === after); t.ex.splice(k >= 0 ? k + 1 : t.ex.length, 0, deep(st)); };
     ins('pullA', 'wide_row', 'seated_row');
     setTimeout(() => { Store.save('program', 'exercises', 'profile'); 0; }, 600);
   }
   if (S.profile.onboarded && pv0 < 14) {
-    S.profile.pv = 14;
+    S.profile.pv = Math.max(S.profile.pv || 0, 14);
     const pb = S.program.templates.find(t => t.id === 'pushB'); if (pb) pb.ex = pb.ex.filter(e => e.x !== 'face_pull');
     S.program.mode = 'cycle'; S.program.cycle = [...DEFAULT_CYCLE];
     setTimeout(() => { Store.save('program', 'profile'); toast('Training now follows your cycle: Push A → Pull A → Push B → Pull B → Rest, then repeat.', { ms: 9000 }); }, 650);
   }
   if (S.profile.onboarded && pv0 < 15) {
     // Nov 13 2026: lock the training plan to exactly what Paula approved (rest times, cycle, all 4 workouts)
-    S.profile.pv = 15;
+    S.profile.pv = Math.max(S.profile.pv || 0, 15);
     S.program.templates = deep(SEED_TEMPLATES); S.program.mode = 'cycle'; S.program.cycle = [...DEFAULT_CYCLE];
     S.profile.restCompound = 150; S.profile.restIsolation = 90;
     setTimeout(() => { Store.save('program', 'profile'); toast('Training plan set: Push A → Pull A → Push B → Pull B → Rest.', { ms: 8000 }); }, 700);
   }
   if (S.profile.onboarded && pv0 < 16) {
     // Nov 16 2026: from-scratch cut (102 kg, 175 cm, 24 y, InBody 35% fat, 6 sessions/7 days, ~4.5k steps)
-    const p = S.profile; p.pv = 16;
+    const p = S.profile; p.pv = Math.max(p.pv || 0, 16);
     Object.assign(p, { kcal: 1900, protein: 190, fat: 55, carbs: 160, fastTargets: { kcal: 1780, protein: 98, fat: 40, carbs: 265 }, trainTime: '21:30' });
     p.mealTimes = { breakfast: '10:00', lunch: '15:00', snack: '19:30', dinner: '23:00' };
     p.steps = { start: 6000, inc: 1000, max: 8000, from: today() };
@@ -4539,35 +4543,42 @@ function normalize() {
     setTimeout(() => { Store.save('profile', 'meals', 'plan', 'measurements', dayBucket(today())); toast('New cut plan is in: 1,900 kcal · 190 g protein (fasting days 1,780 · 98 g).', { ms: 9000 }); }, 750);
   }
   if (S.profile.onboarded && pv0 < 17) {
-    S.profile.pv = 17;
+    S.profile.pv = Math.max(S.profile.pv || 0, 17);
     const ins = (tid, x, after) => { const t = S.program.templates.find(t => t.id === tid); if (!t || t.ex.some(e => e.x === x)) return; const st = SEED_TEMPLATES.find(t => t.id === tid)?.ex.find(e => e.x === x); if (!st) return; const k = t.ex.findIndex(e => e.x === after); t.ex.splice(k >= 0 ? k + 1 : t.ex.length, 0, deep(st)); };
     ins('pushA', 'standing_calf', 'leg_ext'); ins('pushB', 'seated_calf', 'leg_curl');
     setTimeout(() => { Store.save('program', 'profile'); toast('Calves added: standing calf raise in Push A, seated calf raise in Push B.', { ms: 8000 }); }, 800);
   }
   if (S.profile.onboarded && pv0 < 18) {
     // Nov 18 2026: foul is fine now, as the fasting-day breakfast
-    S.profile.pv = 18; S.profile.dislikes = (S.profile.dislikes || []).filter(x => x !== 'foul');
+    S.profile.pv = Math.max(S.profile.pv || 0, 18); S.profile.dislikes = (S.profile.dislikes || []).filter(x => x !== 'foul');
     for (const m of CUT_MEALS) if (!S.meals.some(x => x.id === m.id)) S.meals.push({ ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) });
     for (const wd of [3, 5]) if (S.plan?.[wd]?.breakfast?.m === 'cut_fb') S.plan[wd].breakfast = { m: 'cut_fb_foul', s: 1 };
     setTimeout(() => { Store.save('profile', 'meals', 'plan'); toast('Fasting-day breakfast is now foul, baladi & salad.', { ms: 8000 }); }, 850);
   }
   if (!S.profile.fastPeriods) S.profile.fastPeriods = [deep(NAT_FAST)];
+  if (S.profile.onboarded && pv0 < 23) {
+    S.profile.pv = Math.max(S.profile.pv || 0, 23); if (!S.profile.dislikes.includes('sardines')) S.profile.dislikes.push('sardines');
+    for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
+    S.meals = S.meals.filter(m => m.id !== 'nat_s_sard');
+    if (S.profile.fastActive) S.plan = natWeek();
+    setTimeout(() => Store.save('profile', 'meals', 'plan'), 1050);
+  }
   if (S.profile.onboarded && pv0 < 22) {
-    S.profile.pv = 22;
+    S.profile.pv = Math.max(S.profile.pv || 0, 22);
     for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
     if (S.profile.fastActive) S.plan = natWeek();
     setTimeout(() => Store.save('meals', 'plan', 'profile'), 1000);
   }
   if (S.profile.onboarded && pv0 < 20) {
     // Nov 23 2026: fish allowed on all fast days except Wed & Fri
-    S.profile.pv = 20; S.profile.fastPeriods = [deep(NAT_FAST)];
+    S.profile.pv = Math.max(S.profile.pv || 0, 20); S.profile.fastPeriods = [deep(NAT_FAST)];
     S.profile.dislikes = (S.profile.dislikes || []).filter(x => x !== 'fish' && x !== 'tuna');
     for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
     if (S.profile.fastActive) S.plan = natWeek();
     setTimeout(() => Store.save('profile', 'meals', 'plan'), 950);
   }
   if (S.profile.onboarded && pv0 < 19) {
-    S.profile.pv = 19; S.profile.fastPeriods = [deep(NAT_FAST)];
+    S.profile.pv = Math.max(S.profile.pv || 0, 19); S.profile.fastPeriods = [deep(NAT_FAST)];
     for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
     setTimeout(() => { Store.save('profile', 'meals'); toast('Nativity fast plan ready: it switches on automatically on Wed 25 Nov.', { ms: 9000 }); }, 900);
   }
