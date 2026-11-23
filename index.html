@@ -554,6 +554,7 @@ const SEED_FOODS_RAW = [
   ['baladi','Baladi bread','carb','g',250,9,51,1.2,[['loaf',100],['half loaf',50]],['egyptian'],null],
   ['shrimp','Shrimp, cooked','protein','g',99,24,0.2,0.3,[],[],'fish'],
   ['sardines','Sardines, canned in oil (drained)','protein','g',208,24.6,0,11.5,[['can',90]],[],'fish'],
+  ['chickpeas_roast','Roasted chickpeas (dry, crunchy)','protein','g',369,19,61,6,[['handful',30]],['egyptian'],null],
   ['white_beans','White beans (fasolia), cooked','protein','g',139,9.7,25,0.35,[['cup',180]],['egyptian'],null],
   ['tameya','Ta\'meya (falafel), fried','protein','g',333,13.3,31.8,17.8,[['piece',20]],['egyptian'],null],
   ['hummus','Hummus','protein','g',166,7.9,14.3,9.6,[['tbsp',15]],[],null],
@@ -676,7 +677,7 @@ const SEED_FOODS_RAW = [
 
 // Arabic names so foods can be searched in Arabic too
 const FOOD_AR = {
-  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', white_beans:'فاصوليا بيضاء', shrimp:'جمبري', sardines:'سردين', tuna:'تونة', fish:'سمك بلطي مشوي', tameya:'طعمية فلافل', hummus:'حمص بالطحينة', peas:'بسلة', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
+  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', white_beans:'فاصوليا بيضاء', chickpeas_roast:'حمص محمص مقرمش', shrimp:'جمبري', sardines:'سردين', tuna:'تونة', fish:'سمك بلطي مشوي', tameya:'طعمية فلافل', hummus:'حمص بالطحينة', peas:'بسلة', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
   chicken:'فراخ صدور دجاج مشوي', chicken_thigh:'فراخ ورك دجاج', beef:'لحمة حمراء قليلة الدهون لحم', mince:'لحمة مفرومة', kofta:'كفتة', kofta_lean:'كفتة قليلة الدهون', liver:'كبدة', sojuk:'سجق سجوق', kebab:'كباب', eggs:'بيض', egg_white:'بياض بيض', turkey:'تركي لانشون', whey:'واي بروتين سكوب', tuna:'تونة', fish:'سمك', tofu:'توفو', shawarma_home:'شاورما فراخ بيتي', burger_patty:'برجر لحمة', burger_bun:'عيش برجر',
   greek:'زبادي يوناني', yogurt:'زبادي', hp_yogurt:'زبادي عالي البروتين', milk_skim:'لبن خالي الدسم', milk_low:'لبن قليل الدسم', milk:'لبن كامل الدسم حليب', roumy:'جبنة رومي', cheddar:'جبنة شيدر', white_cheese:'جبنة لايت بيضاء قريش', feta:'جبنة فيتا', istanbuli:'جبنة اسطنبولي بيضاء', white_full:'جبنة بيضاء طرية كاملة الدسم قليلة الملح دومتي', cottage:'جبنة قريش كوتاج', yogurt_sauce:'صوص زبادي',
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
@@ -1074,7 +1075,7 @@ const SEED_PROFILE = {
   budget:2, mealTimes:{ breakfast:'10:00', lunch:'15:00', snack:'19:30', dinner:'23:00' }, trainTime:'21:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:20, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:21, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1119,24 +1120,28 @@ const NAT_FAST = { id: 'nativity-2026', name: 'Nativity fast', from: '2026-11-25
 const NAT_MEALS = [
   { id:'nat_b_foul', n:'Foul, baladi & salad', slot:['breakfast','dinner'], items:[['foul',250,'g'],['veg_oil',3,'g'],['baladi',50,'g'],['salad',100,'g']], prep:'250 g foul (1 plate) with 3 g oil, lemon & cumin. 50 g baladi = ½ loaf.' },
   { id:'nat_b_tam', n:'Foul & ta\'meya, baladi & salad', slot:['breakfast','dinner'], items:[['foul',150,'g'],['tameya',60,'g'],['baladi',50,'g'],['salad',100,'g']], prep:'3 pieces of ta\'meya (about 60 g). The frying oil is already in the ta\'meya numbers.' },
-  { id:'nat_b_hum', n:'Hummus & white bean plate', slot:['breakfast','lunch'], items:[['hummus',80,'g'],['white_beans',150,'g'],['baladi',60,'g'],['salad',150,'g']], prep:'White beans with lemon, cumin and parsley; hummus on the side.' },
+  { id:'nat_b_hum', n:'Hummus & white bean plate', slot:['breakfast','lunch'], items:[['hummus',80,'g'],['white_beans',150,'g'],['baladi',40,'g'],['salad',150,'g']], prep:'White beans with lemon, cumin and parsley; hummus on the side.' },
   { id:'nat_l_fas', n:'Fasolia (white beans) & rice', slot:['lunch','dinner'], items:[['white_beans',300,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',70,'g'],['salad',150,'g']], prep:'Fasting fasolia: white beans in tomato sauce with onion, cooked with 6 g oil (1½ tsp). Weigh beans and rice cooked.' },
   { id:'nat_l_len', n:'Lentils & rice (home koshary style)', slot:['lunch','dinner'], items:[['lentils',320,'g'],['rice',70,'g'],['tomato_sauce',100,'g'],['veg_oil',5,'g'],['salad',150,'g']], prep:'Brown lentils with rice, topped with tomato sauce. 5 g oil for the onions.' },
-  { id:'nat_l_chk', n:'Chickpea & vegetable stew with rice', slot:['lunch','dinner'], items:[['chickpeas',200,'g'],['veg_mix',150,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',60,'g']], prep:'Chickpeas, carrots, potatoes or zucchini in tomato sauce.' },
+  { id:'nat_l_chk', n:'Chickpea & vegetable stew with rice', slot:['lunch','dinner'], items:[['chickpeas',200,'g'],['veg_mix',150,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',40,'g']], prep:'Chickpeas, carrots, potatoes or zucchini in tomato sauce.' },
   { id:'nat_l_pea', n:'Peas stew, lentils & rice', slot:['lunch','dinner'], items:[['peas',200,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',70,'g'],['lentils',170,'g']], prep:'Fasting bisella (peas & carrots in tomato) with a side of lentils.' },
   { id:'nat_l_mol', n:'Molokhia, rice & white beans', slot:['lunch','dinner'], items:[['molokhia',250,'g'],['rice',100,'g'],['white_beans',220,'g'],['veg_oil',3,'g']], prep:'Fasting molokhia (vegetable stock, no chicken broth) with rice and white beans on the side.' },
   { id:'nat_s_soup', n:'Lentil soup', slot:['snack','dinner'], items:[['lentil_soup',350,'g']], prep:'A big bowl (about 350 g) before the gym. Squeeze lemon, add cumin.' },
-  { id:'nat_s_pb', n:'Peanut butter toast & banana', slot:['snack','breakfast'], items:[['toast',25,'g'],['pb',20,'g'],['banana',1,'medium']], prep:'1 slice toast, 20 g peanut butter (a heaped tablespoon), 1 banana.' },
-  { id:'nat_s_hum', n:'Hummus & cucumber', slot:['snack'], items:[['hummus',100,'g'],['cucumber',200,'g'],['baladi',30,'g']], prep:'Dip cucumber sticks; 30 g baladi = about ⅓ loaf.' },
+  { id:'nat_s_pb', n:'Peanut butter sandwich & banana (work)', slot:['snack','breakfast'], items:[['toast',25,'g'],['pb',20,'g'],['banana',1,'medium']], prep:'1 slice toast, 20 g peanut butter (a heaped tablespoon), 1 banana.' },
+  { id:'nat_s_hum', n:'Hummus box & cucumber (work)', slot:['snack'], items:[['hummus',100,'g'],['cucumber',200,'g'],['baladi',30,'g']], prep:'Hummus in a sealed box is fine out of the fridge for a few hours. Dip cucumber sticks; 30 g baladi = about ⅓ loaf.' },
+  // work-friendly snacks: no heating, no fridge needed for a few hours, eaten at work around 7:30 PM
+  { id:'nat_s_tuna', n:'Tuna pocket & cucumber (work)', slot:['snack'], items:[['tuna',120,'g'],['baladi',50,'g'],['cucumber',150,'g']], prep:'Fish day. Take 1 easy-open can of light tuna + ½ baladi + a cucumber. Drain the can at work, add lemon & cumin from home.' },
+  { id:'nat_s_sard', n:'Sardine pocket & cucumber (work)', slot:['snack'], items:[['sardines',90,'g'],['baladi',50,'g'],['cucumber',150,'g']], prep:'Fish day. 1 can sardines in oil, drained well, + ½ baladi + a cucumber.' },
+  { id:'nat_s_chick', n:'Roasted chickpeas & an apple (work)', slot:['snack'], items:[['chickpeas_roast',60,'g'],['apple',1,'medium']], prep:'Pack 60 g crunchy roasted chickpeas (2 handfuls) in a small box + 1 apple.' },
   { id:'nat_d_pasta', n:'Chickpea pasta in tomato sauce', slot:['dinner','lunch'], items:[['pasta',120,'g'],['chickpeas',170,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Weigh pasta and chickpeas cooked.' },
   { id:'nat_d_soup', n:'Lentil soup, salad with tahini & baladi', slot:['dinner'], items:[['lentil_soup',400,'g'],['baladi',50,'g'],['salad',150,'g'],['tahini',10,'g']], prep:'Tahini (10 g = 2 tsp) mixed with lemon over the salad.' },
   { id:'nat_d_tam', n:'Foul & ta\'meya dinner', slot:['dinner','breakfast'], items:[['foul',200,'g'],['tameya',60,'g'],['baladi',50,'g'],['salad',150,'g']], prep:'3 pieces of ta\'meya.' },
-  { id:'nat_d_bowl', n:'White bean & lentil bowl with tahini', slot:['dinner','lunch'], items:[['white_beans',200,'g'],['lentils',150,'g'],['salad',200,'g'],['tahini',15,'g'],['baladi',30,'g']], prep:'Highest-protein plate of the fast: beans and lentils over salad, tahini-lemon dressing.' },
+  { id:'nat_d_bowl', n:'White bean & lentil bowl with tahini', slot:['dinner','lunch'], items:[['white_beans',200,'g'],['lentils',150,'g'],['salad',200,'g'],['tahini',15,'g']], prep:'Highest-protein plate of the fast: beans and lentils over salad, tahini-lemon dressing.' },
   // fish days (Coptic Nativity fast: fish allowed every day except Wednesday & Friday). Grilled / oven fish, oil counted; tuna = canned LIGHT tuna, max 1 can a day.
   { id:'nat_fb_tunafoul', n:'Tuna & foul, baladi & salad', slot:['breakfast'], items:[['tuna',80,'g'],['foul',200,'g'],['baladi',50,'g'],['salad',100,'g'],['veg_oil',3,'g']], prep:'Fish day. ⅔ can of light tuna (drained) mixed into the foul with lemon & cumin.' },
   { id:'nat_fb_tunasand', n:'Tuna sandwich & salad', slot:['breakfast','dinner'], items:[['tuna',120,'g'],['baladi',80,'g'],['salad',150,'g'],['veg_oil',3,'g']], prep:'Fish day. 1 can light tuna (drained) with onion, lemon, cumin and 3 g oil in baladi bread.' },
-  { id:'nat_fl_fish', n:'Grilled fish, rice & tahini salad', slot:['lunch','dinner'], items:[['fish',250,'g'],['rice',200,'g'],['salad',200,'g'],['tahini',10,'g'],['veg_oil',5,'g']], prep:'Fish day. Grilled or oven bolti / bouri (weigh cooked, no skin & bones). Not fried: frying adds 150–300 kcal of oil.' },
-  { id:'nat_fl_shrimp', n:'Shrimp in tomato with rice', slot:['lunch','dinner'], items:[['shrimp',250,'g'],['rice',200,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Shrimp cooked in tomato sauce with garlic, 8 g oil (2 tsp).' },
+  { id:'nat_fl_fish', n:'Grilled fish, rice & tahini salad', slot:['lunch','dinner'], items:[['fish',250,'g'],['rice',150,'g'],['salad',200,'g'],['tahini',10,'g'],['veg_oil',5,'g']], prep:'Fish day. Grilled or oven bolti / bouri (weigh cooked, no skin & bones). Not fried: frying adds 150–300 kcal of oil.' },
+  { id:'nat_fl_shrimp', n:'Shrimp in tomato with rice', slot:['lunch','dinner'], items:[['shrimp',250,'g'],['rice',150,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Shrimp cooked in tomato sauce with garlic, 8 g oil (2 tsp).' },
   { id:'nat_fl_singari', n:'Fish singari with potatoes', slot:['lunch','dinner'], items:[['fish',250,'g'],['potato',250,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Oven tray of fish, potatoes, tomato, peppers & garlic with 8 g oil.' },
   { id:'nat_fd_tunapasta', n:'Tuna pasta in tomato sauce', slot:['dinner','lunch'], items:[['tuna',120,'g'],['pasta',150,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day. 1 can light tuna (drained). Weigh pasta cooked.' },
   { id:'nat_fd_fishwrap', n:'Grilled fish wrap & tahini salad', slot:['dinner','lunch'], items:[['fish',200,'g'],['tortilla_my',1,'tortilla'],['salad',200,'g'],['tahini',10,'g']], prep:'Fish day. Check the tortilla pack has no milk if you are strict.' },
@@ -1144,7 +1149,7 @@ const NAT_MEALS = [
   { id:'nat_fd_fishsoup', n:'Grilled fish & lentil soup', slot:['dinner'], items:[['fish',200,'g'],['lentil_soup',300,'g'],['salad',150,'g']], prep:'Fish day.' },
 ].map(m => ({ ...m, ctx:['home'], cook: 1, min: 20, cost: 1, core: 1, plan: 1, fast: 1 }));
 // weekday 0 = Sunday … 6 = Saturday
-const NAT_WEEK = { 6:['nat_fb_tunasand','nat_fl_fish','nat_s_pb','nat_fd_shrimppasta'], 0:['nat_b_tam','nat_fl_shrimp','nat_s_soup','nat_fd_tunapasta'], 1:['nat_fb_tunafoul','nat_fl_singari','nat_s_pb','nat_fd_fishsoup'], 2:['nat_fb_tunasand','nat_fl_fish','nat_s_pb','nat_fd_fishwrap'], 3:['nat_b_foul','nat_l_len','nat_s_soup','nat_d_pasta'], 4:['nat_b_tam','nat_fl_singari','nat_s_soup','nat_fd_tunapasta'], 5:['nat_b_foul','nat_l_chk','nat_s_soup','nat_d_bowl'] };
+const NAT_WEEK = { 6:['nat_b_tam','nat_fl_fish','nat_s_tuna','nat_fd_shrimppasta'], 0:['nat_b_tam','nat_fl_shrimp','nat_s_sard','nat_fd_fishwrap'], 1:['nat_b_foul','nat_fl_singari','nat_s_tuna','nat_fd_fishsoup'], 2:['nat_b_hum','nat_fl_fish','nat_s_sard','nat_fd_fishwrap'], 3:['nat_b_foul','nat_l_len','nat_s_hum','nat_d_pasta'], 4:['nat_b_tam','nat_fl_singari','nat_s_tuna','nat_fd_shrimppasta'], 5:['nat_b_foul','nat_l_chk','nat_s_chick','nat_d_bowl'] };
 SEED_MEALS.push(...NAT_MEALS);
 // everyday versions of the steak day: swap the meat for chicken breast and/or the tortillas for pasta
 const DAY_VARIANTS = [
@@ -4546,6 +4551,12 @@ function normalize() {
     setTimeout(() => { Store.save('profile', 'meals', 'plan'); toast('Fasting-day breakfast is now foul, baladi & salad.', { ms: 8000 }); }, 850);
   }
   if (!S.profile.fastPeriods) S.profile.fastPeriods = [deep(NAT_FAST)];
+  if (S.profile.onboarded && pv0 < 21) {
+    S.profile.pv = 21;
+    for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
+    if (S.profile.fastActive) S.plan = natWeek();
+    setTimeout(() => Store.save('meals', 'plan', 'profile'), 1000);
+  }
   if (S.profile.onboarded && pv0 < 20) {
     // Nov 23 2026: fish allowed on all fast days except Wed & Fri
     S.profile.pv = 20; S.profile.fastPeriods = [deep(NAT_FAST)];
