@@ -552,6 +552,12 @@ const APP_LOGO = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAU
 // [id, name, category, basis('g' per 100g | 'ml' per 100ml | 'u' per 1 item), kcal, protein, carbs, fat, measures[[label, grams]], tags[], animal]
 const SEED_FOODS_RAW = [
   ['baladi','Baladi bread','carb','g',250,9,51,1.2,[['loaf',100],['half loaf',50]],['egyptian'],null],
+  ['shrimp','Shrimp, cooked','protein','g',99,24,0.2,0.3,[],[],'fish'],
+  ['sardines','Sardines, canned in oil (drained)','protein','g',208,24.6,0,11.5,[['can',90]],[],'fish'],
+  ['white_beans','White beans (fasolia), cooked','protein','g',139,9.7,25,0.35,[['cup',180]],['egyptian'],null],
+  ['tameya','Ta\'meya (falafel), fried','protein','g',333,13.3,31.8,17.8,[['piece',20]],['egyptian'],null],
+  ['hummus','Hummus','protein','g',166,7.9,14.3,9.6,[['tbsp',15]],[],null],
+  ['peas','Green peas, cooked','carb','g',84,5.4,15.6,0.2,[['cup',160]],[],null],
   ['kaiser','Kaiser roll','carb','g',290,9.5,52,4.5,[['roll',70]],['egyptian']],
   ['fino','Fino bread','carb','g',285,9,54,3.5,[['roll',60]],['egyptian'],null],
   ['shami','Shami (Syrian) bread','carb','g',275,9,56,1.2,[['loaf',80]],['egyptian'],null],
@@ -583,7 +589,7 @@ const SEED_FOODS_RAW = [
   ['egg_white','Egg whites','protein','g',52,11,0.7,0.2,[['white',33]],[],'egg'],
   ['turkey','Turkey slices, smoked','protein','g',105,18,3,2,[['slice',15]],[],'poultry'],
   ['whey','Whey protein','protein','g',400,80,8,6,[['scoop',30]],[],'dairy'],
-  ['tuna','Tuna, canned in water','protein','g',116,26,0,1,[['can',120]],[],'fish'],
+  ['tuna','Tuna, canned light in water (drained)','protein','g',116,26,0,1,[['can',120]],[],'fish'],
   ['fish','White fish, grilled','protein','g',110,23,0,2,[],[],'fish'],
   ['tofu','Tofu','protein','g',144,15,3,9,[],[],null],
   ['greek','Greek yogurt, low-fat','dairy','g',73,10,3.6,1.9,[['tub',170],['cup',200]],[],'dairy'],
@@ -670,7 +676,7 @@ const SEED_FOODS_RAW = [
 
 // Arabic names so foods can be searched in Arabic too
 const FOOD_AR = {
-  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
+  baladi:'عيش بلدي رغيف', fino:'عيش فينو', kaiser:'عيش كايزر', white_beans:'فاصوليا بيضاء', shrimp:'جمبري', sardines:'سردين', tuna:'تونة', fish:'سمك بلطي مشوي', tameya:'طعمية فلافل', hummus:'حمص بالطحينة', peas:'بسلة', shami:'عيش شامي', toast:'توست أبيض', toast_br:'توست أسمر بني', tortilla:'تورتيلا', rice:'رز أرز', rice_egy:'رز بالشعرية', pasta:'مكرونة', potato:'بطاطس مسلوقة', potato_baked:'بطاطس بالفرن', sweet_potato:'بطاطا', chickpeas:'حمص', lentils:'عدس', oats:'شوفان', foul:'فول', quinoa:'كينوا',
   chicken:'فراخ صدور دجاج مشوي', chicken_thigh:'فراخ ورك دجاج', beef:'لحمة حمراء قليلة الدهون لحم', mince:'لحمة مفرومة', kofta:'كفتة', kofta_lean:'كفتة قليلة الدهون', liver:'كبدة', sojuk:'سجق سجوق', kebab:'كباب', eggs:'بيض', egg_white:'بياض بيض', turkey:'تركي لانشون', whey:'واي بروتين سكوب', tuna:'تونة', fish:'سمك', tofu:'توفو', shawarma_home:'شاورما فراخ بيتي', burger_patty:'برجر لحمة', burger_bun:'عيش برجر',
   greek:'زبادي يوناني', yogurt:'زبادي', hp_yogurt:'زبادي عالي البروتين', milk_skim:'لبن خالي الدسم', milk_low:'لبن قليل الدسم', milk:'لبن كامل الدسم حليب', roumy:'جبنة رومي', cheddar:'جبنة شيدر', white_cheese:'جبنة لايت بيضاء قريش', feta:'جبنة فيتا', istanbuli:'جبنة اسطنبولي بيضاء', white_full:'جبنة بيضاء طرية كاملة الدسم قليلة الملح دومتي', cottage:'جبنة قريش كوتاج', yogurt_sauce:'صوص زبادي',
   pb:'زبدة فول سوداني', tahini:'طحينة', olive_oil:'زيت زيتون', veg_oil:'زيت', ghee:'سمنة', almonds:'لوز', mixed_nuts:'مكسرات', honey:'عسل', dates:'بلح تمر', banana:'موز موزة', apple:'تفاح', orange:'برتقال', guava:'جوافة', fruit:'فاكهة ثمرة',
@@ -1063,12 +1069,12 @@ const SEED_PROFILE = {
   activity:'Desk work, ~2,000 steps/day; padel or football 1×/week', experience:'Years of training, returning after an extended break',
   style:'Low volume, high effort, efficient sessions', sleepTarget:7,
   trackRIR:true, restCompound:150, restIsolation:90,
-  dislikes:['oats','tuna','fish','cottage','tofu','quinoa'], dislikeText:['soy','vegan burger'],
+  dislikes:['oats','cottage','tofu','quinoa'], dislikeText:['soy','vegan burger'],
   lessPreferred:[], favorites:['chicken','beef','kofta','kebab','liver','roumy','turkey','greek','whey','baladi','rice'], favMeals:[], unavailable:[], allergies:[], restrictions:'',
   budget:2, mealTimes:{ breakfast:'10:00', lunch:'15:00', snack:'19:30', dinner:'23:00' }, trainTime:'21:30',
   homeFood:'Family cooks: rice with chicken or meat, kofta, kebab, kebda', outFood:'At GUC / outside: shawarma and sandwiches, koshary, grills',
   fasting:{ enabled:true, days:[3,5], exclude:['meat','poultry','dairy','egg','fish'], allowFish:false, allow:['whey'], note:'Whey protein allowed on fasting days.' },
-  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:18, dayStartHour:7,
+  reviewDay:5, theme:'light', units:'metric', sync:true, onboarded:false, startDate:null, pv:20, dayStartHour:7,
 };
 
 const SEED_REMINDERS = [
@@ -1107,6 +1113,39 @@ const CUT_MEALS = [
 const CUT_WEEK = { 0:['cut_b','cut_l','cut_s','cut_d_ch'], 1:['cut_b','cut_l','cut_s','cut_d_lv'], 2:['cut_b','cut_l','cut_s','cut_d_ch'], 3:['cut_fb_foul','cut_fl','cut_fs','cut_fd'], 4:['cut_b','cut_l','cut_s','cut_d_kf'], 5:['cut_fb_foul','cut_fl','cut_fs','cut_fd'], 6:['cut_b','cut_l','cut_s','cut_d_st'] };
 const CUT_FAST_WEEK = { 3:['cut_fb_foul','cut_fl','cut_fs','cut_fd'], 5:['cut_fb_foul','cut_fl','cut_fs','cut_fd'] };
 SEED_MEALS.push(...CUT_MEALS);
+// Coptic Nativity fast 2026: 25 Nov 2026 → 6 Jan 2027 (Christmas 7 Jan). Fully plant-based, no whey (none in stock), no soy.
+// Built for ~1,900 kcal and ~100 g protein a day: legumes at every meal, all oil counted.
+const NAT_FAST = { id: 'nativity-2026', name: 'Nativity fast', from: '2026-11-25', to: '2027-01-06', fishDays: [0, 1, 2, 4, 6], targets: { kcal: 1900, protein: 160, fat: 45, carbs: 200 }, strictTargets: { kcal: 1900, protein: 100, fat: 40, carbs: 300 } };
+const NAT_MEALS = [
+  { id:'nat_b_foul', n:'Foul, baladi & salad', slot:['breakfast','dinner'], items:[['foul',250,'g'],['veg_oil',3,'g'],['baladi',50,'g'],['salad',100,'g']], prep:'250 g foul (1 plate) with 3 g oil, lemon & cumin. 50 g baladi = ½ loaf.' },
+  { id:'nat_b_tam', n:'Foul & ta\'meya, baladi & salad', slot:['breakfast','dinner'], items:[['foul',150,'g'],['tameya',60,'g'],['baladi',50,'g'],['salad',100,'g']], prep:'3 pieces of ta\'meya (about 60 g). The frying oil is already in the ta\'meya numbers.' },
+  { id:'nat_b_hum', n:'Hummus & white bean plate', slot:['breakfast','lunch'], items:[['hummus',80,'g'],['white_beans',150,'g'],['baladi',60,'g'],['salad',150,'g']], prep:'White beans with lemon, cumin and parsley; hummus on the side.' },
+  { id:'nat_l_fas', n:'Fasolia (white beans) & rice', slot:['lunch','dinner'], items:[['white_beans',300,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',70,'g'],['salad',150,'g']], prep:'Fasting fasolia: white beans in tomato sauce with onion, cooked with 6 g oil (1½ tsp). Weigh beans and rice cooked.' },
+  { id:'nat_l_len', n:'Lentils & rice (home koshary style)', slot:['lunch','dinner'], items:[['lentils',320,'g'],['rice',70,'g'],['tomato_sauce',100,'g'],['veg_oil',5,'g'],['salad',150,'g']], prep:'Brown lentils with rice, topped with tomato sauce. 5 g oil for the onions.' },
+  { id:'nat_l_chk', n:'Chickpea & vegetable stew with rice', slot:['lunch','dinner'], items:[['chickpeas',200,'g'],['veg_mix',150,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',60,'g']], prep:'Chickpeas, carrots, potatoes or zucchini in tomato sauce.' },
+  { id:'nat_l_pea', n:'Peas stew, lentils & rice', slot:['lunch','dinner'], items:[['peas',200,'g'],['tomato_sauce',100,'g'],['veg_oil',6,'g'],['rice',70,'g'],['lentils',170,'g']], prep:'Fasting bisella (peas & carrots in tomato) with a side of lentils.' },
+  { id:'nat_l_mol', n:'Molokhia, rice & white beans', slot:['lunch','dinner'], items:[['molokhia',250,'g'],['rice',100,'g'],['white_beans',220,'g'],['veg_oil',3,'g']], prep:'Fasting molokhia (vegetable stock, no chicken broth) with rice and white beans on the side.' },
+  { id:'nat_s_soup', n:'Lentil soup', slot:['snack','dinner'], items:[['lentil_soup',350,'g']], prep:'A big bowl (about 350 g) before the gym. Squeeze lemon, add cumin.' },
+  { id:'nat_s_pb', n:'Peanut butter toast & banana', slot:['snack','breakfast'], items:[['toast',25,'g'],['pb',20,'g'],['banana',1,'medium']], prep:'1 slice toast, 20 g peanut butter (a heaped tablespoon), 1 banana.' },
+  { id:'nat_s_hum', n:'Hummus & cucumber', slot:['snack'], items:[['hummus',100,'g'],['cucumber',200,'g'],['baladi',30,'g']], prep:'Dip cucumber sticks; 30 g baladi = about ⅓ loaf.' },
+  { id:'nat_d_pasta', n:'Chickpea pasta in tomato sauce', slot:['dinner','lunch'], items:[['pasta',120,'g'],['chickpeas',170,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Weigh pasta and chickpeas cooked.' },
+  { id:'nat_d_soup', n:'Lentil soup, salad with tahini & baladi', slot:['dinner'], items:[['lentil_soup',400,'g'],['baladi',50,'g'],['salad',150,'g'],['tahini',10,'g']], prep:'Tahini (10 g = 2 tsp) mixed with lemon over the salad.' },
+  { id:'nat_d_tam', n:'Foul & ta\'meya dinner', slot:['dinner','breakfast'], items:[['foul',200,'g'],['tameya',60,'g'],['baladi',50,'g'],['salad',150,'g']], prep:'3 pieces of ta\'meya.' },
+  { id:'nat_d_bowl', n:'White bean & lentil bowl with tahini', slot:['dinner','lunch'], items:[['white_beans',200,'g'],['lentils',150,'g'],['salad',200,'g'],['tahini',15,'g'],['baladi',30,'g']], prep:'Highest-protein plate of the fast: beans and lentils over salad, tahini-lemon dressing.' },
+  // fish days (Coptic Nativity fast: fish allowed every day except Wednesday & Friday). Grilled / oven fish, oil counted; tuna = canned LIGHT tuna, max 1 can a day.
+  { id:'nat_fb_tunafoul', n:'Tuna & foul, baladi & salad', slot:['breakfast'], items:[['tuna',80,'g'],['foul',200,'g'],['baladi',50,'g'],['salad',100,'g'],['veg_oil',3,'g']], prep:'Fish day. ⅔ can of light tuna (drained) mixed into the foul with lemon & cumin.' },
+  { id:'nat_fb_tunasand', n:'Tuna sandwich & salad', slot:['breakfast','dinner'], items:[['tuna',120,'g'],['baladi',80,'g'],['salad',150,'g'],['veg_oil',3,'g']], prep:'Fish day. 1 can light tuna (drained) with onion, lemon, cumin and 3 g oil in baladi bread.' },
+  { id:'nat_fl_fish', n:'Grilled fish, rice & tahini salad', slot:['lunch','dinner'], items:[['fish',250,'g'],['rice',200,'g'],['salad',200,'g'],['tahini',10,'g'],['veg_oil',5,'g']], prep:'Fish day. Grilled or oven bolti / bouri (weigh cooked, no skin & bones). Not fried: frying adds 150–300 kcal of oil.' },
+  { id:'nat_fl_shrimp', n:'Shrimp in tomato with rice', slot:['lunch','dinner'], items:[['shrimp',250,'g'],['rice',200,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Shrimp cooked in tomato sauce with garlic, 8 g oil (2 tsp).' },
+  { id:'nat_fl_singari', n:'Fish singari with potatoes', slot:['lunch','dinner'], items:[['fish',250,'g'],['potato',250,'g'],['tomato_sauce',100,'g'],['veg_oil',8,'g'],['salad',150,'g']], prep:'Fish day. Oven tray of fish, potatoes, tomato, peppers & garlic with 8 g oil.' },
+  { id:'nat_fd_tunapasta', n:'Tuna pasta in tomato sauce', slot:['dinner','lunch'], items:[['tuna',120,'g'],['pasta',150,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day. 1 can light tuna (drained). Weigh pasta cooked.' },
+  { id:'nat_fd_fishwrap', n:'Grilled fish wrap & tahini salad', slot:['dinner','lunch'], items:[['fish',200,'g'],['tortilla_my',1,'tortilla'],['salad',200,'g'],['tahini',10,'g']], prep:'Fish day. Check the tortilla pack has no milk if you are strict.' },
+  { id:'nat_fd_shrimppasta', n:'Shrimp pasta', slot:['dinner','lunch'], items:[['shrimp',200,'g'],['pasta',150,'g'],['tomato_sauce',150,'g'],['veg_oil',5,'g']], prep:'Fish day.' },
+  { id:'nat_fd_fishsoup', n:'Grilled fish & lentil soup', slot:['dinner'], items:[['fish',200,'g'],['lentil_soup',300,'g'],['salad',150,'g']], prep:'Fish day.' },
+].map(m => ({ ...m, ctx:['home'], cook: 1, min: 20, cost: 1, core: 1, plan: 1, fast: 1 }));
+// weekday 0 = Sunday … 6 = Saturday
+const NAT_WEEK = { 6:['nat_fb_tunasand','nat_fl_fish','nat_s_pb','nat_fd_shrimppasta'], 0:['nat_b_tam','nat_fl_shrimp','nat_s_soup','nat_fd_tunapasta'], 1:['nat_fb_tunafoul','nat_fl_singari','nat_s_pb','nat_fd_fishsoup'], 2:['nat_fb_tunasand','nat_fl_fish','nat_s_pb','nat_fd_fishwrap'], 3:['nat_b_foul','nat_l_len','nat_s_soup','nat_d_pasta'], 4:['nat_b_tam','nat_fl_singari','nat_s_soup','nat_fd_tunapasta'], 5:['nat_b_foul','nat_l_chk','nat_s_soup','nat_d_bowl'] };
+SEED_MEALS.push(...NAT_MEALS);
 // everyday versions of the steak day: swap the meat for chicken breast and/or the tortillas for pasta
 const DAY_VARIANTS = [
   { id:'sd_l_c', n:'Chicken shawarma wraps', slot:['lunch','dinner'], items:[['chicken',200,'g'],['tortilla_my',2,'tortilla'],['cheddar',20,'g'],['onion_pepper',100,'g']], prep:'Slice the chicken breast thin, sear with onion and peppers. Weigh the chicken after cooking.' },
@@ -1415,7 +1454,7 @@ function stepsTarget(k = today()) {
   return Math.min(s.max, s.start + weeks * s.inc);
 }
 // fasting days have their own targets (plant foods, one whey): lower protein, higher carbs
-const targets = (k = today()) => { const p = S.profile, ft = p.fastTargets; if (ft && isFastingDay(k)) return { k: ft.kcal, p: ft.protein, c: ft.carbs, f: ft.fat, w: p.waterMl, fast: true }; return { k: p.kcal, p: p.protein, c: p.carbs, f: p.fat, w: p.waterMl }; };
+const targets = (k = today()) => { const p = S.profile, ft = p.fastTargets, per = fastPeriodFor(k); if (per) { const tt = (per.fishDays && !per.fishDays.includes(wdOf(k)) && per.strictTargets) || per.targets; return { k: tt.kcal, p: tt.protein, c: tt.carbs, f: tt.fat, w: p.waterMl, fast: true, period: per.name }; } if (ft && isFastingDay(k)) return { k: ft.kcal, p: ft.protein, c: ft.carbs, f: ft.fat, w: p.waterMl, fast: true }; return { k: p.kcal, p: p.protein, c: p.carbs, f: p.fat, w: p.waterMl }; };
 
 function dayTotals(k) {
   const d = peekDay(k); if (!d) return { k: 0, p: 0, c: 0, f: 0, n: 0 };
@@ -1425,7 +1464,17 @@ function dayTotals(k) {
 }
 
 // ---------- preferences & restrictions ----------
-function isFastingDay(k) { const fa = S.profile.fasting; return fa.enabled && fa.days.includes(wdOf(k)); }
+const fishOK = k => { const per = fastPeriodFor(k); return !!per && (per.fishDays || []).includes(wdOf(k)); };
+const fastPeriodFor = k => (S.profile.fastPeriods || []).find(p => k >= p.from && k <= p.to) || null;
+function isFastingDay(k) { const fa = S.profile.fasting; return !!fastPeriodFor(k) || (fa.enabled && fa.days.includes(wdOf(k))); }
+const natWeek = () => { const out = {}; for (const [wd, ids] of Object.entries(NAT_WEEK)) { out[wd] = {}; SLOTS.forEach((s, i) => out[wd][s] = { m: ids[i], s: 1 }); } return out; };
+// switch the weekly plan into / out of a fasting season (the normal plan is kept and comes back the day after it ends)
+function syncFastPeriod() {
+  const p = S.profile, per = fastPeriodFor(today());
+  if (per && p.fastActive !== per.id) { if (!p.fastActive) p.savedPlan = deep(S.plan); S.plan = natWeek(); p.fastActive = per.id; Store.save('plan', 'profile'); return `${per.name} started: fish days (all except Wed & Fri) and plant-only Wed & Fri are now your plan.`; }
+  if (!per && p.fastActive) { if (p.savedPlan) S.plan = p.savedPlan; delete p.savedPlan; p.fastActive = null; Store.save('plan', 'profile'); return 'The fast is over: your normal plan is back.'; }
+  return null;
+}
 function foodBlockReason(food, opts = {}) {
   if (!food) return 'missing';
   const p = S.profile;
@@ -1435,7 +1484,7 @@ function foodBlockReason(food, opts = {}) {
   if (p.allergies.some(t => t && name.includes(t.toLowerCase()))) return 'allergy';
   if (p.unavailable.includes(food.id)) return 'unavailable';
   if ((opts.avoid || []).includes(food.id)) return 'avoided today';
-  if (opts.fasting && food.animal && !(p.fasting.allow || []).includes(food.id)) {
+  if (opts.fasting && food.animal && !(p.fasting.allow || []).includes(food.id) && !(opts.fish && food.animal === 'fish')) {
     const ex = p.fasting.exclude;
     if (food.animal === 'fish' ? !p.fasting.allowFish && ex.includes('meat') : ex.includes(food.animal)) return 'fasting';
   }
@@ -1503,9 +1552,9 @@ function planFor(k) {
 function planDayTotals(wd) { return SLOTS.reduce((t, s) => { const p = S.plan[wd]?.[s]; if (!p) return t; const n = itemsNut(mealItems(p.m, p.s)); t.k += n.k; t.p += n.p; t.c += n.c; t.f += n.f; return t; }, { k: 0, p: 0, c: 0, f: 0 }); }
 
 // ---------- per-meal protein / carb choice (Nov 16 2026) ----------
-const PROTEIN_PICKS = ['chicken', 'beef', 'liver', 'kofta_lean', 'mince', 'shawarma_home', 'chicken_thigh'];
+const PROTEIN_PICKS = ['chicken', 'beef', 'liver', 'kofta_lean', 'mince', 'shawarma_home', 'chicken_thigh', 'fish', 'shrimp', 'tuna', 'sardines', 'white_beans', 'lentils', 'chickpeas', 'foul'];
 const CARB_PICKS = ['rice', 'tortilla_my', 'pasta', 'baladi', 'toast', 'fino', 'kaiser', 'potato', 'sweet_potato', 'rice_egy'];
-const PICK_SHORT = { tortilla: 'Tortilla wrap', toast_br: 'Brown toast', burger_bun: 'Burger bun', potato_baked: 'Baked potatoes', kofta: 'Kofta (regular)', burger_patty: 'Beef burger patty', chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
+const PICK_SHORT = { tortilla: 'Tortilla wrap', toast_br: 'Brown toast', burger_bun: 'Burger bun', potato_baked: 'Baked potatoes', kofta: 'Kofta (regular)', burger_patty: 'Beef burger patty', chicken: 'Chicken breast', beef: 'Steak', liver: 'Liver (kebda)', kofta_lean: 'Kofta', mince: 'Minced beef', shawarma_home: 'Chicken shawarma', chicken_thigh: 'Chicken thigh', fish: 'Grilled fish (bolti)', shrimp: 'Shrimp', tuna: 'Tuna (light, canned)', sardines: 'Sardines', white_beans: 'White beans', lentils: 'Lentils', chickpeas: 'Chickpeas', foul: 'Foul', rice: 'Rice', tortilla_my: 'Tortilla', pasta: 'Pasta', baladi: 'Baladi bread', toast: 'Toast', fino: 'Fino bread', kaiser: 'Kaiser roll', potato: 'Potatoes', sweet_potato: 'Sweet potato', rice_egy: 'Vermicelli rice' };
 // any meat/poultry or starchy food gets a dropdown, even ones outside the short lists (e.g. a generic tortilla in a replaced meal)
 const pickKind = id => { if (PROTEIN_PICKS.includes(id)) return 'protein'; if (CARB_PICKS.includes(id)) return 'carb'; const f = F(id); if (!f || f.b === 'u') return null; if (f.cat === 'protein' && f.p >= 15 && !/whey|egg/.test(id)) return 'protein'; if (f.cat === 'carb' && f.c >= 15 && !/oat|cereal|granola|cracker|biscuit/.test(id)) return 'carb'; return null; };
 const pickName = id => PICK_SHORT[id] || F(id)?.n || id;
@@ -2469,7 +2518,7 @@ function greet() { const h = new Date().getHours(); return h < 5 ? 'Late night' 
 // ================= OVERVIEW (Paula's day) =================
 function personalLine(k) {
   const sch = scheduleFor(k), st = sessionStatus(k), tpl = sch.type === 'workout' ? TPL(sch.t) : null, p = S.profile, out = [];
-  if (isFastingDay(k)) out.push(SLOTS.some(sl => { const pl = planFor(k)[sl]; return pl && pl.items.some(i => foodBlockReason(F(i.f), { fasting: true }) === 'fasting'); }) ? 'Fasting day: if you are fasting today, tap "Something else?" or swap a meal for fasting options.' : 'Fasting day: plant meals plus whey. Protein lands near 150 g today, and that is fine.');
+  if (isFastingDay(k)) out.push(SLOTS.some(sl => { const pl = planFor(k)[sl]; return pl && pl.items.some(i => foodBlockReason(F(i.f), { fasting: true, fish: fishOK(k) }) === 'fasting'); }) ? 'Fasting day: if you are fasting today, tap "Something else?" or swap a meal for fasting options.' : 'Fasting day: plant meals plus whey. Protein lands near 150 g today, and that is fine.');
   if (S.active) out.push(`Your ${S.active.name} session is in progress.`);
   else if (st === 'done') out.push('Workout done today. Get your protein in and rest well.');
   else if (tpl && st === 'rest-marked') out.push('You marked today as a rest day. Recover and come back stronger.');
@@ -3242,7 +3291,7 @@ function dailyMessage(k, na, ph) {
 }
 function compPickers(k, s, pl) {
   const fasting = isFastingDay(k);
-  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = [...new Set([it.f, ...(kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS)])].filter(id => F(id) && (id === it.f || !(fasting && foodBlockReason(F(id), { fasting: true }))));
+  const rows = (pl.items || []).map((it, i) => { const kind = pickKind(it.f); if (!kind) return ''; const list = [...new Set([it.f, ...(kind === 'protein' ? PROTEIN_PICKS : CARB_PICKS)])].filter(id => F(id) && (id === it.f || !(fasting && foodBlockReason(F(id), { fasting: true, fish: fishOK(k) }))));
     return `<label class="pick"><span>${kind === 'protein' ? 'Protein' : 'Carbs'}</span><select class="input" data-c="compPick" data-k="${k}" data-slot="${s}" data-i="${i}" aria-label="${kind === 'protein' ? 'Protein' : 'Carbs'} for ${SLOT_LABEL[s]}">${list.map(id => `<option value="${id}" ${id === it.f ? 'selected' : ''}>${esc(pickName(id))}</option>`).join('')}</select></label>`; }).join('');
   if (!rows) return '';
   return `<div class="picks">${rows}${pl.edited ? `<button class="btn sm ghost" data-a="compReset" data-k="${k}" data-slot="${s}">Undo changes</button>` : ''}</div>`;
@@ -3550,7 +3599,7 @@ const A = {
   },
   swapItem(el) {
     const slot = el.dataset.slot, k = el.dataset.k, i = +el.dataset.i, p = planFor(k)[slot], it = p.items[i], f = F(it.f);
-    const opts = swapOptions(it, { fasting: isFastingDay(k) }), cur = itemNut(it);
+    const opts = swapOptions(it, { fasting: isFastingDay(k), fish: fishOK(k) }), cur = itemNut(it);
     window._swap = { slot, k, i, items: deep(p.items), m: p.m, name: p.name, opts };
     openModal(`Swap ${esc(f.n.toLowerCase())}`, `<p class="small muted" style="margin:0">Currently ${esc(itemLabel(it))}: ${fmtN(cur.k)} kcal, ${fmtN(cur.p)} g protein. Amounts below are matched on ${swapGroup(f) === 'protein' && cur.p >= 8 ? 'protein' : 'calories'}.</p>
       <div class="list">${opts.map((o, j) => `<button class="li btn ghost" style="height:auto;justify-content:flex-start;text-align:left" data-a="swapPick" data-j="${j}">${foodArt(o.item.f, 36)}<span class="grow"><b style="font-weight:600">${esc(itemLabel(o.item))}</b><div class="tiny dim mono">${fmtN(o.n.k)} kcal (${o.n.k - cur.k >= 0 ? '+' : ''}${fmtN(o.n.k - cur.k)}) · ${fmtN(o.n.p)} g P (${o.n.p - cur.p >= 0 ? '+' : ''}${fmtN(o.n.p - cur.p)})</div></span>${ic('chev')}</button>`).join('') || '<div class="empty">No suitable swaps that respect your preferences.</div>'}</div>`);
@@ -3689,7 +3738,7 @@ const A = {
   eatSet(el) { const e = eatState(), f = el.dataset.f; let v = el.dataset.v; if (['time','budget'].includes(f)) v = +v; if (f === 'canCook') v = v === 'true'; e[f] = v; render(); },
   eatChip(el) { const e = eatState(), arr = e[el.dataset.f], id = el.dataset.id, i = arr.indexOf(id); i >= 0 ? arr.splice(i, 1) : arr.push(id); render(); },
   recSwap(el) {
-    const r = window._recs[el.dataset.r], i = +el.dataset.i, it = r.items[i], opts = swapOptions(it, { avoid: eatState().avoid, fasting: isFastingDay(today()) });
+    const r = window._recs[el.dataset.r], i = +el.dataset.i, it = r.items[i], opts = swapOptions(it, { avoid: eatState().avoid, fasting: isFastingDay(today()), fish: fishOK(today()) });
     window._rs = { r, i, opts };
     openModal(`Swap ${esc(F(it.f).n.toLowerCase())}`, `<div class="list">${opts.map((o, j) => `<button class="li btn ghost" style="height:auto;justify-content:flex-start;text-align:left" data-a="recSwapPick" data-j="${j}"><span class="grow"><b style="font-weight:600">${esc(itemLabel(o.item))}</b><div class="tiny dim mono">${fmtN(o.n.k)} kcal · ${fmtN(o.n.p)} g P</div></span>${ic('chev')}</button>`).join('') || '<div class="empty">No suitable swaps.</div>'}</div>`);
   },
@@ -4025,7 +4074,7 @@ const A = {
     const p = S.profile; p.onboarded = true; if (!p.startDate) p.startDate = today(); if (!p.steps.from) p.steps.from = today();
     if (p.currentWeight && !S.measurements.some(m => m.date === today() && m.kg != null)) S.measurements.push({ id: uid(), date: today(), kg: round(+p.currentWeight, 2), notes: 'From setup' });
     S.plan = paulaWeek();
-    Store.saveAll(); S.ui.view = 'overview'; render(); window.scrollTo(0, 0); toast('You\'re set. Log your first meal or weigh-in to get going.');
+    Store.saveAll(); S.ui.view = 'overview'; syncFastPeriod(); render(); window.scrollTo(0, 0); toast('You\'re set. Log your first meal or weigh-in to get going.');
   },
 };
 
@@ -4496,6 +4545,20 @@ function normalize() {
     for (const wd of [3, 5]) if (S.plan?.[wd]?.breakfast?.m === 'cut_fb') S.plan[wd].breakfast = { m: 'cut_fb_foul', s: 1 };
     setTimeout(() => { Store.save('profile', 'meals', 'plan'); toast('Fasting-day breakfast is now foul, baladi & salad.', { ms: 8000 }); }, 850);
   }
+  if (!S.profile.fastPeriods) S.profile.fastPeriods = [deep(NAT_FAST)];
+  if (S.profile.onboarded && pv0 < 20) {
+    // Nov 23 2026: fish allowed on all fast days except Wed & Fri
+    S.profile.pv = 20; S.profile.fastPeriods = [deep(NAT_FAST)];
+    S.profile.dislikes = (S.profile.dislikes || []).filter(x => x !== 'fish' && x !== 'tuna');
+    for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
+    if (S.profile.fastActive) S.plan = natWeek();
+    setTimeout(() => Store.save('profile', 'meals', 'plan'), 950);
+  }
+  if (S.profile.onboarded && pv0 < 19) {
+    S.profile.pv = 19; S.profile.fastPeriods = [deep(NAT_FAST)];
+    for (const m of NAT_MEALS) { const i = S.meals.findIndex(x => x.id === m.id), v = { ...deep(m), items: m.items.map(x => ({ f: x[0], a: x[1], u: x[2] })) }; if (i >= 0) S.meals[i] = v; else S.meals.push(v); }
+    setTimeout(() => { Store.save('profile', 'meals'); toast('Nativity fast plan ready: it switches on automatically on Wed 25 Nov.', { ms: 9000 }); }, 900);
+  }
   if (pv0 < 7 && S.profile.onboarded) { const n = repairLateEntries(); setTimeout(() => { Store.saveAll(); if (n) toast(`Moved ${n} after-midnight entr${n === 1 ? 'y' : 'ies'} back to yesterday. Your day now ends at ${fmtHM(pad(dayStart()) + ':00')}.`, { ms: 9000 }); }, 300); }
   if (S._migrated) { S._migrated = false; setTimeout(() => { Store.saveAll(); toast('Your weekly plan is loaded with exact grams. Wednesday and Friday are fasting versions with whey.', { ms: 9000 }); }, 300); }
 }
@@ -4517,6 +4580,7 @@ async function init() {
     return;
   }
   normalize(); applyTheme();
+  { const msg = S.profile.onboarded && syncFastPeriod(); if (msg) setTimeout(() => toast(msg, { ms: 9000 }), 1200); }
   if (restored) { Store.saveAll(); setTimeout(() => toast('Your data was restored from the backup copy on this phone.', { ms: 9000 }), 600); }
   S._today = today();
   const cloud = Store.connectCloud().then(changed => { normalize(); return changed; });
